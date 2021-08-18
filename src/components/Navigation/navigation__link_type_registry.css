@@ -1,0 +1,11 @@
+.navigation__link_type_registry {
+  font-size: 12px;
+  line-height: 1.33;
+}
+
+@media screen and (max-width: 425px) {
+  .navigation__link_type_registry {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+}

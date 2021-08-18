@@ -1,0 +1,50 @@
+.techs__link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 100px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media screen and (max-width: 950px) {
+  .techs__link-list {
+    margin: 83px 0 0;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .techs__link-list {
+    margin: 50px 0 0;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .techs__link-list {
+    padding: 0 calc((100% - 554px) / 2) 0;
+  }
+}
+
+@media screen and (max-width: 649px) {
+  .techs__link-list {
+    padding: 0 calc((100% - 460px) / 2) 0;
+  }
+}
+
+@media screen and (max-width: 549px) {
+  .techs__link-list {
+    padding: 0 calc((100% - 366px) / 2) 0;
+  }
+}
+
+@media screen and (max-width: 449px) {
+  .techs__link-list {
+    padding: 0 calc((100% - 272px) / 2) 0;
+  }
+}
+
+@media screen and (max-width: 393px) {
+  .techs__link-list {
+    padding: 0 calc((100% - 178px) / 2) 0;
+  }
+}

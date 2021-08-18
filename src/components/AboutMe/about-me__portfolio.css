@@ -1,0 +1,23 @@
+.about-me__portfolio {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  margin: 100px 0 0;
+}
+
+@media screen and (max-width: 950px) {
+  .about-me__portfolio {
+    margin: 90px 0 0;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .about-me__portfolio {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 4;
+    grid-row-end: 5;
+    margin: 70px 0 0;
+  }
+}

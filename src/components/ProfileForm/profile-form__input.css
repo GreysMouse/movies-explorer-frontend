@@ -1,0 +1,25 @@
+.profile-form__input {
+  margin: 8px 0;
+  padding: 8px 0;
+  width: 75%;
+  height: 14px;
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.21;  
+  text-align: right;
+  color: #fff;
+}
+
+.profile-form__input::placeholder {
+  letter-spacing: 1.4px;
+  color: #424242;
+}
+
+@media screen and (max-width: 425px) {
+  .profile-form__input {
+    font-size: 12px;
+  }
+}

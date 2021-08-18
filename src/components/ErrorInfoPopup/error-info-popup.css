@@ -1,0 +1,17 @@
+.error-info-popup {
+  position: fixed;
+  display: none;
+  bottom: 0;
+  right: 0;
+  padding: 10px 10px;
+  max-width: 350px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: #fff;
+  opacity: 0.6;
+}
+
+.error-info-popup:hover {
+  cursor: pointer;
+  opacity: 1.0;
+}

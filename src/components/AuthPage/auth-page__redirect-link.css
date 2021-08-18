@@ -1,0 +1,16 @@
+.auth-page__redirect-link {
+  margin-left: 6px;
+  text-decoration: none;
+  color: #4285f4;
+  transition: color 0.2s ease-out;
+}
+
+.auth-page__redirect-link:hover {
+  color: #fff;  
+}
+
+@media screen and (max-width: 425px) {
+  .auth-page__redirect-link {
+    margin-left: 7px; 
+  }
+}

@@ -1,0 +1,15 @@
+.promo__nav-tab {
+  margin: 150px 0 30px;
+}
+
+@media screen and (max-width: 950px) {
+  .promo__nav-tab {
+    margin: 314px 0 30px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .promo__nav-tab {
+    margin: 212px 0 17px;
+  }
+}

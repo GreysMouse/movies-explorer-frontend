@@ -1,0 +1,11 @@
+.plan-grid__background {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+@media screen and (max-width: 425px) {
+  .plan-grid__background {
+    padding: 11px 0;
+  }
+}

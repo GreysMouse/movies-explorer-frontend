@@ -1,0 +1,20 @@
+.about-project__text-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 70px 0 0;
+}
+
+@media screen and (max-width: 950px) {
+  .about-project__text-container {
+    gap: 30px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .about-project__text-container {
+    flex-direction: column;
+    gap: 56px;
+    margin: 60px 0 0;
+  }
+}

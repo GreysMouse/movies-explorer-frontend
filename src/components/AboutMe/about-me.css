@@ -1,0 +1,19 @@
+.about-me {
+  /* display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: max-content max-content; */
+  padding: 110px 0 105px 0;
+}
+
+@media screen and (max-width: 950px) {
+  .about-me {
+    padding: 90px 0 70px 0;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .about-me {
+    /* grid-template-columns: auto;
+    grid-template-rows: auto auto auto auto; */
+  }
+}

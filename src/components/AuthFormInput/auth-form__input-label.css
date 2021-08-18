@@ -1,0 +1,12 @@
+.auth-form__input-label {
+  margin: 14px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #8b8b8b;
+  transition: color 0.2s ease-out;
+}
+
+.auth-form__input-label:focus-within {
+  color: #fff;
+}

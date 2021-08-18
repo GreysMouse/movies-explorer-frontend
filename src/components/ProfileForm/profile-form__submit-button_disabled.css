@@ -1,0 +1,8 @@
+.profile-form__submit-button_disabled {
+  color: #424242;
+}
+
+.profile-form__submit-button_disabled:hover {
+  cursor: default;
+  opacity: 1.0;
+}

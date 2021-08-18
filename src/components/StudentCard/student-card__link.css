@@ -1,0 +1,13 @@
+.student-card__link {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.21;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.2s ease-out;
+}
+
+.student-card__link:hover {
+  opacity: 0.4;
+}

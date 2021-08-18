@@ -1,0 +1,15 @@
+.filter-checkbox__label_checked::after {
+  left: 18px;
+  background-color: #2be080;
+}
+
+.filter-checkbox__label_checked:hover::after {
+  background-color: #2bf080;
+}
+
+@media screen and (max-width: 950px) {
+  .filter-checkbox__label_checked::after {
+    left: unset;
+    right: 2px;
+  }
+}

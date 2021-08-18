@@ -1,0 +1,10 @@
+.menu-button_location_main {
+  display: none;
+  background: url(../../images/menu-button-location-main.svg) center/contain no-repeat;
+}
+
+@media screen and (max-width: 768px) {
+  .menu-button_location_main {
+    display: block;
+  }
+}
