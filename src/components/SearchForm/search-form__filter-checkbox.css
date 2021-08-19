@@ -1,0 +1,21 @@
+.search-form__filter-checkbox {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  margin: 32px 0 0;
+}
+
+@media screen and (max-width: 950px) {
+  .search-form__filter-checkbox {
+    justify-self: flex-end;
+    margin: 29px 0 0;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .search-form__filter-checkbox {
+    justify-self: center;
+    margin: 40px 0 0;
+  }
+}

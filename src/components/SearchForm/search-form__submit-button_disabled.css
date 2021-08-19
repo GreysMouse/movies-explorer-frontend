@@ -1,0 +1,10 @@
+.search-form__submit-button_disabled {
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid #424242;
+}
+
+.search-form__submit-button_disabled:hover {
+  cursor: default;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0);
+}

@@ -1,0 +1,22 @@
+.student-card__link-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  row-gap: 10px;
+  margin: 100px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media screen and (max-width: 950px) {
+  .student-card__link-list {
+    margin: 87px 0 0;    
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .student-card__link-list {
+    column-gap: 26px;
+    margin: 40px 0 0;    
+  }
+}

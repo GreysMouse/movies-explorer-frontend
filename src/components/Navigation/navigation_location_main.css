@@ -1,0 +1,14 @@
+.navigation_location_main {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  row-gap: 8px;
+  flex-wrap: wrap;
+  margin: 18px 0 18px 80px;
+}
+
+@media screen and (max-width: 768px) {
+  .navigation_location_main {
+    display: none;
+  }
+}

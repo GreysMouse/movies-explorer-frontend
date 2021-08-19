@@ -1,0 +1,14 @@
+.plan-grid__text {
+  justify-self: center;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.21;
+}
+
+@media screen and (max-width: 425px) {
+  .plan-grid__text {
+    font-size: 11px;
+    line-height: 1.18;
+  }
+}

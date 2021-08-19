@@ -1,0 +1,15 @@
+.saved-movies__movies-card-list {
+  padding: 70px 0 230px;
+}
+
+@media screen and (max-width: 950px) {
+  .saved-movies__movies-card-list {
+    padding: 70px 0 170px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .saved-movies__movies-card-list {
+    padding: 40px 0 170px;
+  }
+}

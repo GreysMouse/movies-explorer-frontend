@@ -1,0 +1,10 @@
+.menu-button_location_menu {
+  display: block;
+  align-self: flex-end;
+  background: url(../../images/menu-button-location-menu.svg) center/contain no-repeat;
+  transition: transform 0.2s linear;
+}
+
+.menu-button_location_menu:hover {
+  transform: rotate(90deg);
+}

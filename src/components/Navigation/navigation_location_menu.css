@@ -1,0 +1,15 @@
+.navigation_location_menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 0 77px;
+  box-sizing: border-box;
+  height: calc(100% - 44px);
+}
+
+@media screen and (max-width: 425px) {
+  .navigation_location_menu {
+    padding: 86px 0 33px;
+    height: calc(100% - 43px);
+  }
+}

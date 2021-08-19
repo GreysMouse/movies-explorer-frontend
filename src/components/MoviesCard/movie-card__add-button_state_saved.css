@@ -1,0 +1,8 @@
+.movie-card__add-button_state_saved {
+  background: #313131 url(../../images/movie-add-button-icon-saved.svg) center no-repeat;
+  transition: background 0.2s ease-out, color 0.2s ease-out;
+}
+
+.movie-card__add-button_state_saved:hover {
+  background: #eee url(../../images/movie-add-button-icon-saved-hover.svg) center no-repeat;
+}

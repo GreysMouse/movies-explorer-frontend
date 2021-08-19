@@ -1,0 +1,17 @@
+.movie-card__caption {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+}
+
+@media screen and (max-width: 767px) {
+  .movie-card__caption {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}

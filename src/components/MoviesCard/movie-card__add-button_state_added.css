@@ -1,0 +1,8 @@
+.movie-card__add-button_state_added {
+  background: #ee3465 url(../../images/movie-add-button-icon-added.svg) center no-repeat;
+  transition: background 0.2s ease-out, color 0.2s ease-out;
+}
+
+.movie-card__add-button_state_added:hover {
+  background: #eee url(../../images/movie-add-button-icon-added-hover.svg) center no-repeat;
+}

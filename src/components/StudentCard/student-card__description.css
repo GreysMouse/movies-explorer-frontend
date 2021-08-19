@@ -1,0 +1,24 @@
+.student-card__description {
+  margin: 26px 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.57;
+  word-break: break-word;
+  color: #fff;
+}
+
+@media screen and (max-width: 950px) {
+  .student-card__description {
+    margin: 20px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .student-card__description {
+    margin: 20px 0 0;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+}

@@ -1,0 +1,11 @@
+.portfolio__link {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  text-decoration: none;
+  transition: opacity 0.2s ease-out;
+}
+
+.portfolio__link:hover {
+  opacity: 0.4;
+}

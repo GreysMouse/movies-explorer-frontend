@@ -1,0 +1,21 @@
+.not-found-page__backward-link {
+  margin: 184px 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.21;
+  color: #4285F4;
+  text-align: center;
+  text-decoration: none;
+}
+
+.not-found-page__backward-link:hover {
+  color: #eee;
+}
+
+@media screen and (max-width: 425px) {
+  .not-found-page__backward-link {
+    margin: auto 0 30px;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+}

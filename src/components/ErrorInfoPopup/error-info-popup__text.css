@@ -1,0 +1,14 @@
+.error-info-popup__text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  word-break: break-word;
+  color: #202020;
+}
+
+@media screen and (max-width: 425px) {
+  .error-info-popup__text {
+    font-size: 12px;
+  }
+}
