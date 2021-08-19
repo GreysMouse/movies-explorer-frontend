@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 import ProfileForm from '../ProfileForm/ProfileForm';
 
@@ -12,7 +12,7 @@ import './profile__form.css';
 import './profile__logout-link.css';
 
 function Profile(props) {
-  const currentUser = React.useContext(currentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
     <section className="profile">

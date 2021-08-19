@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 import defaultStudentAvatar from '../../images/default-student-avatar.svg';
 
 import './navigation.css';
@@ -16,7 +16,7 @@ import './navigation__link_type_profile.css';
 import './navigation__profile-avatar.css';
 
 function Navigation(props) {
-  const currentUser = React.useContext(currentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
     <nav className={ 'navigation ' + (props.location ? `navigation_location_${props.location}` : '') }>

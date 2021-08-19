@@ -1,9 +1,12 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import IsLoggedInContext from '../../contexts/IsLoggedInContext';
+
 import currentUserAvatar from '../../images/current-user-avatar.jpg';
 
+import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
@@ -37,7 +40,8 @@ function App() {
     ]
   });
 
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [ isLoggedIn, setIsLoggedIn ] = React.useState(false);
+  const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
 
   const history = useHistory();
 
@@ -76,45 +80,49 @@ function App() {
   }
 
   return (
-    <currentUserContext.Provider value={ currentUser }>
-      <div className="app">
-        <div className="app__container">
-          <Switch>
-            <Route exact path="/">
-              <Header location="promo" />
-              <Main />
-              <Footer />
-            </Route>
-            <Route path="/movies">
-              <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-              <Movies />
-              <Footer />
-            </Route>
-            <Route path="/saved-movies">
-              <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-              <SavedMovies />
-              <Footer />
-            </Route>
-            <Route path="/profile">
-              <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-              <Profile onUserUpdate={ handleUserUpdate } onLogout={ handleLogout } />
-            </Route>
-            <Route path="/signup">
-              <Register onRegister={ handleRegister } />
-            </Route>
-            <Route path="/signin">
-              <Login onLogin={ handleLogin } />
-            </Route>
-            <Route path="*">
-              <NotFoundPage />
-            </Route>
-          </Switch>
-          <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
-          <Preloader isActive={ false } />
-          <ErrorInfoPopup isOpen={ false } message="Неверный логин или пароль" />
+    <CurrentUserContext.Provider value={ currentUser }>
+      <IsLoggedInContext.Provider value={ isLoggedIn }>
+        <div className="app">
+          <div className="app__container">
+            <Switch>
+              <Route exact path="/">
+                <Header location="promo" />
+                <Main />
+                <Footer />
+              </Route>
+              <ProtectedRoute defaultPath="/">
+                <Route path="/movies">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                  <Movies />
+                  <Footer />
+                </Route>
+                <Route path="/saved-movies">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                  <SavedMovies />
+                  <Footer />
+                </Route>
+                <Route path="/profile">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                  <Profile onUserUpdate={ handleUserUpdate } onLogout={ handleLogout } />
+                </Route>
+              </ProtectedRoute>            
+              <Route path="/signup">
+                <Register onRegister={ handleRegister } />
+              </Route>
+              <Route path="/signin">
+                <Login onLogin={ handleLogin } />
+              </Route>
+              <Route path="*">
+                <NotFoundPage />
+              </Route>
+            </Switch>
+            <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
+            <Preloader isActive={ false } />
+            <ErrorInfoPopup isOpen={ false } message="Неверный логин или пароль" />
+          </div>
         </div>
-      </div>
-    </currentUserContext.Provider>
+      </IsLoggedInContext.Provider>
+    </CurrentUserContext.Provider>
   );
 }
 
