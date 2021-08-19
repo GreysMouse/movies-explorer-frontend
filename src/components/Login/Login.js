@@ -35,7 +35,10 @@ function Login(props) {
     evt.preventDefault();
 
     if (!isValidUserEmail || !isValidUserPassword) alert('!');
-    else props.onLogin();
+    else props.onLogin({
+      email: userEmail,
+      password: userPassword
+    });
   }
 
   return (

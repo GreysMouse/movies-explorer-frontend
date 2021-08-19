@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
+import userApi from '../../utils/userApi';
+
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import IsLoggedInContext from '../../contexts/IsLoggedInContext';
 
@@ -40,21 +42,44 @@ function App() {
     ]
   });
 
-  const [ isLoggedIn, setIsLoggedIn ] = React.useState(false);
+  const [ isLoggedIn, setIsLoggedIn ] = React.useState(true);
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
 
   const history = useHistory();
 
-  function handleRegister() {
-    history.push('/signin');
+  function handleRegister({ email, password, name }) {
+    userApi.register({ email, password, name })
+    .then(() => {
+      history.push('/signin');
+      console.log('Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
-  function handleLogin() {
-    history.push('/movies');
+  function handleLogin({ email, password }) {
+    userApi.login({ email, password })
+    .then(() => {
+      setIsLoggedIn(true);
+      history.push('/movies');
+      console.log('Выполнен вход в аккаунт');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function handleLogout() {
-    history.push('/signin');
+    userApi.logout()
+    .then(() => {
+      setIsLoggedIn(false);
+      // history.push('/movies');
+      console.log('Выполнен выход из аккаунта');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   function handleUserUpdate() {
@@ -89,29 +114,27 @@ function App() {
                 <Header location="promo" />
                 <Main />
                 <Footer />
-              </Route>
-              <ProtectedRoute defaultPath="/">
-                <Route path="/movies">
-                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                  <Movies />
-                  <Footer />
-                </Route>
-                <Route path="/saved-movies">
-                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                  <SavedMovies />
-                  <Footer />
-                </Route>
-                <Route path="/profile">
-                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                  <Profile onUserUpdate={ handleUserUpdate } onLogout={ handleLogout } />
-                </Route>
-              </ProtectedRoute>            
+              </Route>            
               <Route path="/signup">
                 <Register onRegister={ handleRegister } />
               </Route>
               <Route path="/signin">
                 <Login onLogin={ handleLogin } />
               </Route>
+              <ProtectedRoute path="/movies" defaultPath="/">
+                <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                <Movies />
+                <Footer />
+              </ProtectedRoute>
+              <ProtectedRoute path="/saved-movies" defaultPath="/">
+                <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                <SavedMovies />
+                <Footer />
+              </ProtectedRoute>
+              <ProtectedRoute path="/profile" defaultPath="/">
+                <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                <Profile onUserUpdate={ handleUserUpdate } onLogout={ handleLogout } logoutLink="/signin" />
+              </ProtectedRoute>
               <Route path="*">
                 <NotFoundPage />
               </Route>

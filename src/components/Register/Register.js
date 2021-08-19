@@ -78,7 +78,11 @@ function Register(props) {
   function handleSubmit(evt) {
     evt.preventDefault();
 
-    props.onRegister();
+    props.onRegister({
+      email: userEmail,
+      password: userPassword,
+      name: userName
+    });
   }
 
   return (

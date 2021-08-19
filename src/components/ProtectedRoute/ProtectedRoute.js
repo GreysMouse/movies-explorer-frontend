@@ -7,7 +7,7 @@ function ProtectedRoute(props) {
   const isLoggedIn = React.useContext(IsLoggedInContext);
 
   return (
-    <Route>
+    <Route path={ props.path }>
       { isLoggedIn ? props.children : <Redirect to={ props.defaultPath } /> }
     </Route>
   );

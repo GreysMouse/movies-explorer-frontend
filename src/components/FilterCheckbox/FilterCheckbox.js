@@ -17,7 +17,7 @@ function FilterCheckbox(props) {
       <input className="filter-checkbox__input" id="filter-__input" type="checkbox" />
       <label 
         className={ 'filter-checkbox__label ' + (isChecked ? 'filter-checkbox__label_checked' : '') }
-        for="filter-checkbox__input"
+        htmlFor="filter-checkbox__input"
         onClick={ handleFilterCheckboxCheck }
       >
         Короткометражки

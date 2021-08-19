@@ -22,7 +22,13 @@ function Profile(props) {
           addClasses="profile__form"
           onUserUpdate={ props.onUserUpdate }
         />
-        <Link className="profile__logout-link" onClick={ props.onLogout }>Выйти из аккаунта</Link>
+        <Link
+          className="profile__logout-link"
+          to={ props.logoutLink }
+          onClick={ props.onLogout }
+        >
+          Выйти из аккаунта
+        </Link>
       </div>      
     </section>
   );
