@@ -41,10 +41,7 @@ class UserApi {
         'Content-Type': 'application/json'
       }
     })
-    .then((res) => {
-      if (res.ok) return res;
-      return Promise.reject(`${ res.status === 500 ? 'Сервер не отвечает' : 'Ошибка с кодом ' + res.status + ': ' + res.statusText }`);
-    });
+    .then(this._checkResponse);
   }
 }
 

@@ -53,9 +53,7 @@ function App() {
       history.push('/signin');
       console.log('Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти');
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
   }
 
   function handleLogin({ email, password }) {
@@ -65,21 +63,17 @@ function App() {
       history.push('/movies');
       console.log('Выполнен вход в аккаунт');
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
   }
 
   function handleLogout() {
     userApi.logout()
     .then(() => {
       setIsLoggedIn(false);
-      // history.push('/movies');
+      history.push('/');
       console.log('Выполнен выход из аккаунта');
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
   }
 
   function handleUserUpdate() {
