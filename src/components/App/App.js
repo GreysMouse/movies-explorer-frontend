@@ -27,7 +27,8 @@ import './app__container.css';
 
 function App() {
   const [ currentUser, setCurrentUser ] = React.useState({
-    name: 'Диана',
+    name: 'mouse',
+    email: 'greys.mouse@yandex.ru',
     bio: 'Фронтенд-разработчик, 24 года',
     description: 'Живу в городе Ярославль. Закончила физический факультет по специальности электроника и наноэлектроника. Люблю решать математические задачки. В настоящее время обучаюсь в Яндекс Практикум.',
     avatar: currentUserAvatar,
@@ -76,22 +77,24 @@ function App() {
     .catch((err) => console.log(err));
   }
 
-  function handleUserUpdate() {
-    setCurrentUser({
-      name: 'Диана',
-      bio: 'Фронтенд-разработчик, 24 года',
-      description: 'Живу в городе Ярославль. Закончила физический факультет по специальности электроника и наноэлектроника. Люблю решать математические задачки. В настоящее время обучаюсь в Яндекс Практикум.',
-      avatar: currentUserAvatar,
-      accounts: [
-        { name: 'Facebook', link: 'https://www.facebook.com/' },
-        { name: 'Github', link: 'https://github.com/GreysMouse/' }
-      ],
-      portfolio: [
-        { name: 'Статичный сайт', link: 'https://github.com/GreysMouse/how-to-learn/' },
-        { name: 'Адаптивный сайт', link: 'https://github.com/GreysMouse/russian-travel/' },
-        { name: 'Одностраничное приложение', link: 'https://github.com/GreysMouse/react-mesto-api-full/' }
-      ]
-    });
+  function handleUserUpdate({ email, name }) {
+    console.log(name, email);
+
+    // setCurrentUser({
+    //   name: 'Диана',
+    //   bio: 'Фронтенд-разработчик, 24 года',
+    //   description: 'Живу в городе Ярославль. Закончила физический факультет по специальности электроника и наноэлектроника. Люблю решать математические задачки. В настоящее время обучаюсь в Яндекс Практикум.',
+    //   avatar: currentUserAvatar,
+    //   accounts: [
+    //     { name: 'Facebook', link: 'https://www.facebook.com/' },
+    //     { name: 'Github', link: 'https://github.com/GreysMouse/' }
+    //   ],
+    //   portfolio: [
+    //     { name: 'Статичный сайт', link: 'https://github.com/GreysMouse/how-to-learn/' },
+    //     { name: 'Адаптивный сайт', link: 'https://github.com/GreysMouse/russian-travel/' },
+    //     { name: 'Одностраничное приложение', link: 'https://github.com/GreysMouse/react-mesto-api-full/' }
+    //   ]
+    // });
   }
 
   function handleMenuButtonClick() {
