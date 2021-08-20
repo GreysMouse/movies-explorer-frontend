@@ -19,13 +19,12 @@ function AuthFormInput(props) {
           type={ props.type }
           value={ props.value }
           onChange={ props.onChange }
-          onBlur={ props.onBlur }
         />
       </label>
       <span
         className={ 'auth-form__input-span ' + (props.isSpanVisible ? 'auth-form__input-span_visible' : '') }
       >
-        { props.spanText || 'Что-то пошло не так...' }
+        { props.spanText }
       </span>
     </>
   );
