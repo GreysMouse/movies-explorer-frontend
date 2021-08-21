@@ -7,7 +7,7 @@ import './movies.css';
 function Movies(props) {
   return (
     <main className="movies">
-      <SearchForm />
+      <SearchForm onMoviesSearch={ props.onMoviesSearch } />
       <MoviesCardList />
       <MoviesUploader />
     </main>

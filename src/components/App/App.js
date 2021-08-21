@@ -1,8 +1,11 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
+import moviesSearchFilter from '../../utils/moviesSearchFilter';
+
 import authApi from '../../utils/authApi';
 import userApi from '../../utils/userApi';
+import moviesApi from '../../utils/moviesApi';
 
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import IsLoggedInContext from '../../contexts/IsLoggedInContext';
@@ -47,15 +50,18 @@ function App() {
   const [ isLoggedIn, setIsLoggedIn ] = React.useState(true);
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
 
+  const [ findMovies, setFindMovies ] = React.useState({});
+
   const history = useHistory();
 
   React.useEffect(() => {
     userApi.getUserCredentials()
-    .then((user) => handleAuth(user.email, user.data))
+    .then((user) => handleAuthorization(user.email, user.data))
     .catch((err) => console.log(err));
+    // eslint-disable-next-line
   }, []);
 
-  function handleAuth(email, name) {
+  function handleAuthorization(email, name) {
     currentUser.email = email;
     currentUser.name = name;
     setCurrentUser(currentUser);
@@ -78,7 +84,7 @@ function App() {
 
   function handleLogin({ email, password }) {
     authApi.login({ email, password })
-    .then((data) => handleAuth(data.email, data.name))
+    .then((data) => handleAuthorization(data.email, data.name))
     .catch((err) => console.log(err));
   }
 
@@ -105,6 +111,12 @@ function App() {
     .catch((err) => console.log(err));
   }
 
+  function handleMoviesSearch(searchQuery, isShort) {
+    moviesApi.searchMovies()
+    .then((moviesList) => setFindMovies(moviesSearchFilter(moviesList, searchQuery, isShort)))
+    .catch((err) => console.log(err));
+  }
+
   function handleMenuButtonClick() {
     setIsMenuOpen(!isMenuOpen);
   }
@@ -128,12 +140,12 @@ function App() {
               </Route>
               <ProtectedRoute path="/movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <Movies />
+                <Movies onMoviesSearch={ handleMoviesSearch } />
                 <Footer />
               </ProtectedRoute>
               <ProtectedRoute path="/saved-movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <SavedMovies />
+                <SavedMovies onMoviesSearch={ handleMoviesSearch } />
                 <Footer />
               </ProtectedRoute>
               <ProtectedRoute path="/profile" defaultPath="/">

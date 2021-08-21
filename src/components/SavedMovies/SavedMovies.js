@@ -4,10 +4,10 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import './saved-movies.css';
 import './saved-movies__movies-card-list.css';
 
-function SavedMovies() {
+function SavedMovies(props) {
   return (
     <main className="saved-movies">
-      <SearchForm />
+      <SearchForm onMoviesSearch={ props.onMoviesSearch } />
       <MoviesCardList addClasses="saved-movies__movies-card-list" />
     </main>
   );

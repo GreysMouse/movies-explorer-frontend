@@ -5,25 +5,30 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import './search-form.css';
 import './search-form__input.css';
 import './search-form__submit-button.css';
-import './search-form__submit-button_disabled.css';
 import './search-form__filter-checkbox.css';
 
-function SearchForm() {
-  const [ movieTitle, setMovieTitle ] = React.useState('');
-
+function SearchForm(props) {
+  const [ searchQuery, setSearchQuery ] = React.useState('');
   const [ isFormValid, setIsFormValid ] = React.useState(false);
+
+  const [ isShortMovie, setIsShortMovie ] = React.useState(false);
 
   function handleMovieTitleInput(evt) {
     const { value } = evt.target;
 
-    setMovieTitle(value);
+    setSearchQuery(value);
+    setIsFormValid(value.length !== 0);
+  }
 
-    if (!value) setIsFormValid(false);
-    else setIsFormValid(true);
+  function handleFilterCheckboxCheck() {
+    setIsShortMovie(!isShortMovie);
   }
 
   function handleSubmit(evt) {
     evt.preventDefault();
+    
+    if (isFormValid) props.onMoviesSearch(searchQuery, isShortMovie);
+    else console.log('Нужно ввести ключевое слово');
   }
 
   return (
@@ -33,18 +38,22 @@ function SearchForm() {
         placeholder="Поиск фильма"
         autoComplete="off"
         spellCheck="false"
+        required
         type="text"
-        value={ movieTitle }
+        value={ searchQuery }
         onChange={ handleMovieTitleInput }
       />
       <button
-        className={ 'search-form__submit-button ' + (isFormValid ? '' : 'search-form__submit-button_disabled') }
+        className="search-form__submit-button"
         onClick={ handleSubmit }
-        disabled={ !isFormValid }
       >
         Найти
       </button>
-      <FilterCheckbox addClasses="search-form__filter-checkbox" />
+      <FilterCheckbox
+        addClasses="search-form__filter-checkbox"
+        onCheck={ handleFilterCheckboxCheck }
+        isChecked={ isShortMovie }
+      />
     </form>
   );
 }
