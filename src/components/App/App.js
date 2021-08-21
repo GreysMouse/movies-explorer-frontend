@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
+import authApi from '../../utils/authApi';
 import userApi from '../../utils/userApi';
 
 import CurrentUserContext from '../../contexts/CurrentUserContext';
@@ -27,7 +28,7 @@ import './app__container.css';
 
 function App() {
   const [ currentUser, setCurrentUser ] = React.useState({
-    name: 'mouse',
+    name: 'Mouse Greys',
     email: 'greys.mouse@yandex.ru',
     bio: 'Фронтенд-разработчик, 24 года',
     description: 'Живу в городе Ярославль. Закончила физический факультет по специальности электроника и наноэлектроника. Люблю решать математические задачки. В настоящее время обучаюсь в Яндекс Практикум.',
@@ -48,53 +49,60 @@ function App() {
 
   const history = useHistory();
 
+  React.useEffect(() => {
+    userApi.getUserCredentials()
+    .then((user) => handleAuth(user.email, user.data))
+    .catch((err) => console.log(err));
+  }, []);
+
+  function handleAuth(email, name) {
+    currentUser.email = email;
+    currentUser.name = name;
+    setCurrentUser(currentUser);
+    
+    setIsLoggedIn(true);
+
+    history.push('/movies');
+    console.log('Выполнен вход в аккаунт');
+  }
+
   function handleRegister({ email, password, name }) {
-    userApi.register({ email, password, name })
+    authApi.register({ email, password, name })
     .then(() => {
       history.push('/signin');
+
       console.log('Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти');
     })
     .catch((err) => console.log(err));
   }
 
   function handleLogin({ email, password }) {
-    userApi.login({ email, password })
-    .then(() => {
-      setIsLoggedIn(true);
-      history.push('/movies');
-      console.log('Выполнен вход в аккаунт');
-    })
+    authApi.login({ email, password })
+    .then((data) => handleAuth(data.email, data.name))
     .catch((err) => console.log(err));
   }
 
   function handleLogout() {
-    userApi.logout()
+    authApi.logout()
     .then(() => {
       setIsLoggedIn(false);
       history.push('/');
+
       console.log('Выполнен выход из аккаунта');
     })
     .catch((err) => console.log(err));
   }
 
-  function handleUserUpdate({ email, name }) {
-    console.log(name, email);
+  function handleUserCredentialsUpdate({ email, name }) {
+    userApi.updateUserCredentials({ email, name })
+    .then((user) => {
+      currentUser.name = user.name;
+      currentUser.email = user.email;
+      setCurrentUser(currentUser);
 
-    // setCurrentUser({
-    //   name: 'Диана',
-    //   bio: 'Фронтенд-разработчик, 24 года',
-    //   description: 'Живу в городе Ярославль. Закончила физический факультет по специальности электроника и наноэлектроника. Люблю решать математические задачки. В настоящее время обучаюсь в Яндекс Практикум.',
-    //   avatar: currentUserAvatar,
-    //   accounts: [
-    //     { name: 'Facebook', link: 'https://www.facebook.com/' },
-    //     { name: 'Github', link: 'https://github.com/GreysMouse/' }
-    //   ],
-    //   portfolio: [
-    //     { name: 'Статичный сайт', link: 'https://github.com/GreysMouse/how-to-learn/' },
-    //     { name: 'Адаптивный сайт', link: 'https://github.com/GreysMouse/russian-travel/' },
-    //     { name: 'Одностраничное приложение', link: 'https://github.com/GreysMouse/react-mesto-api-full/' }
-    //   ]
-    // });
+      console.log('Данные успешно обновлены');
+    })
+    .catch((err) => console.log(err));
   }
 
   function handleMenuButtonClick() {
@@ -130,7 +138,11 @@ function App() {
               </ProtectedRoute>
               <ProtectedRoute path="/profile" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <Profile onUserUpdate={ handleUserUpdate } onLogout={ handleLogout } logoutLink="/signin" />
+                <Profile
+                  onUserUpdate={ handleUserCredentialsUpdate }
+                  onLogout={ handleLogout }
+                  logoutLink="/signin"
+                />
               </ProtectedRoute>
               <Route path="*">
                 <NotFoundPage />

@@ -1,6 +1,6 @@
 import { BASE_URL } from '../config';
 
-class UserApi {
+class AuthApi {
   constructor(options) {
     this._baseURL = options.baseURL;
   }
@@ -12,9 +12,32 @@ class UserApi {
     }`);
   }
   
-  getUserCredentials() {
-    return fetch(`${ this._baseURL }/users/me`, {
-      method: 'GET',
+  register({ email, password, name }) {
+    return fetch(`${ this._baseURL }/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password, name })
+    })
+    .then(this._checkResponse);
+  }
+
+  login({ email, password }) {
+    return fetch(`${ this._baseURL }/signin`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    })
+    .then(this._checkResponse);
+  }
+
+  logout() {
+    return fetch(`${ this._baseURL }/signout`, {
+      method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
@@ -22,22 +45,10 @@ class UserApi {
     })
     .then(this._checkResponse);
   }
-
-  updateUserCredentials({ email, name }) {
-    return fetch(`${ this._baseURL }/users/me`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, name })
-    })
-    .then(this._checkResponse);
-  }
 }
 
-const userApi = new UserApi({
+const authApi = new AuthApi({
   baseURL: BASE_URL
 });
 
-export default userApi;
+export default authApi;
