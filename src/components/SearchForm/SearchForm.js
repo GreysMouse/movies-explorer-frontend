@@ -46,6 +46,7 @@ function SearchForm(props) {
       <button
         className="search-form__submit-button"
         onClick={ handleSubmit }
+        disabled={ props.disabled }
       >
         Найти
       </button>

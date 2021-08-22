@@ -1,7 +1,7 @@
 function moviesSearchFilter(moviesList, searchQuery, isShort) {
   const keyWords = searchQuery.toLowerCase().split(' ').filter((key) => !!key);
   
-  const filteredMoviesList = new Map();
+  const filteredMoviesList = [];
 
   let include;
 
@@ -19,7 +19,10 @@ function moviesSearchFilter(moviesList, searchQuery, isShort) {
       }
     }
 
-    if (include) filteredMoviesList.set(movie.id, movie);
+    if (include) filteredMoviesList.push({
+      id: movie.id,
+      data: movie
+    });
   }
   
   return filteredMoviesList;

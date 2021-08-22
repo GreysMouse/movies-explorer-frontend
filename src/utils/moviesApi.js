@@ -13,7 +13,7 @@ class MoviesApi {
   }
   
   searchMovies() {
-    return fetch('https://api.nomoreparties.co/beatfilm-movies', {
+    return fetch('https://api.nomoreparties.co/beatfilm-movies/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

@@ -24,7 +24,6 @@ import Login from '../Login/Login';
 import Menu from '../Menu/Menu';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import ErrorInfoPopup from '../ErrorInfoPopup/ErrorInfoPopup';
-import Preloader from '../Preloader/Preloader';
 
 import './app.css';
 import './app__container.css';
@@ -49,8 +48,11 @@ function App() {
 
   const [ isLoggedIn, setIsLoggedIn ] = React.useState(true);
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
+  const [ isLoading, setIsLoading ] = React.useState(false);
 
-  const [ findMovies, setFindMovies ] = React.useState({});
+  const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
+
+  const [ findMoviesList, setFindMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);
 
   const history = useHistory();
 
@@ -58,6 +60,7 @@ function App() {
     userApi.getUserCredentials()
     .then((user) => handleAuthorization(user.email, user.data))
     .catch((err) => console.log(err));
+
     // eslint-disable-next-line
   }, []);
 
@@ -65,10 +68,13 @@ function App() {
     currentUser.email = email;
     currentUser.name = name;
     setCurrentUser(currentUser);
-    
+
     setIsLoggedIn(true);
 
+    localStorage.removeItem('movies');
+
     history.push('/movies');
+
     console.log('Выполнен вход в аккаунт');
   }
 
@@ -92,6 +98,9 @@ function App() {
     authApi.logout()
     .then(() => {
       setIsLoggedIn(false);
+
+      localStorage.removeItem('movies');
+
       history.push('/');
 
       console.log('Выполнен выход из аккаунта');
@@ -105,16 +114,26 @@ function App() {
       currentUser.name = user.name;
       currentUser.email = user.email;
       setCurrentUser(currentUser);
-
+      
       console.log('Данные успешно обновлены');
     })
     .catch((err) => console.log(err));
   }
 
   function handleMoviesSearch(searchQuery, isShort) {
+    setIsLoading(true);
+    
     moviesApi.searchMovies()
-    .then((moviesList) => setFindMovies(moviesSearchFilter(moviesList, searchQuery, isShort)))
-    .catch((err) => console.log(err));
+    .then((moviesList) => {
+      const filteredMoviesList = moviesSearchFilter(moviesList, searchQuery, isShort);
+
+      setFindMoviesList(filteredMoviesList);
+      setIsMoviesSearchButtonClicked(true);
+
+      localStorage.setItem('movies', JSON.stringify(filteredMoviesList));
+    })
+    .catch((err) => console.log(err))
+    .finally(() => setIsLoading(false));
   }
 
   function handleMenuButtonClick() {
@@ -140,7 +159,12 @@ function App() {
               </Route>
               <ProtectedRoute path="/movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <Movies onMoviesSearch={ handleMoviesSearch } />
+                <Movies
+                  onMoviesSearch={ handleMoviesSearch }
+                  isMoviesLoading={ isLoading }
+                  findMoviesList={ findMoviesList }
+                  isSearchButtonClicked={ isMoviesSearchButtonClicked }
+                />
                 <Footer />
               </ProtectedRoute>
               <ProtectedRoute path="/saved-movies" defaultPath="/">
@@ -161,7 +185,6 @@ function App() {
               </Route>
             </Switch>
             <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
-            <Preloader isActive={ false } />
             <ErrorInfoPopup isOpen={ false } message="Неверный логин или пароль" />
           </div>
         </div>

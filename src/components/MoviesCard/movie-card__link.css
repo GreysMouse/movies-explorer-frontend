@@ -1,0 +1,49 @@
+.movie-card__link {
+  position: relative;
+  display: block;
+}
+
+.movie-card__link:hover {
+  cursor: pointer;
+}
+
+.movie-card__link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.2s ease-out;
+}
+
+.movie-card__link::after {
+  content: 'Смотреть трейлер на YouTube';
+  position: absolute;
+  top: calc((100% - 66px) / 2);
+  left: 20px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0);
+  transition: color 0.2s ease-out;
+}
+
+.movie-card__link:hover::before {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.movie-card__link:hover::after {
+  color: rgba(255, 255, 255, 1.0);
+}
+
+@media screen and (max-width: 767px) {
+  .movie-card__link::after {
+    top: calc((100% - 56px) / 2);
+    font-size: 20px;
+  }
+}

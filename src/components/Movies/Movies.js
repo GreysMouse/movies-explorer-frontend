@@ -7,8 +7,16 @@ import './movies.css';
 function Movies(props) {
   return (
     <main className="movies">
-      <SearchForm onMoviesSearch={ props.onMoviesSearch } />
-      <MoviesCardList />
+      <SearchForm
+        onMoviesSearch={ props.onMoviesSearch }
+        disabled={ props.isMoviesLoading }
+      />
+      {
+        (props.findMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
+          findMoviesList={ props.findMoviesList }
+          isMoviesLoading={ props.isMoviesLoading }
+        />
+      }
       <MoviesUploader />
     </main>
   );
