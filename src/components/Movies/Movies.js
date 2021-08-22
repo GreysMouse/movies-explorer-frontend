@@ -14,10 +14,11 @@ function Movies(props) {
       {
         (props.findMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
           findMoviesList={ props.findMoviesList }
+          showedMoviesList={ props.showedMoviesList }
           isMoviesLoading={ props.isMoviesLoading }
         />
       }
-      <MoviesUploader />
+      <MoviesUploader onButtonClick={ props.onUploaderClick } />
     </main>
   );
 }

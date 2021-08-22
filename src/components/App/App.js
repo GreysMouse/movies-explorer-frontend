@@ -2,6 +2,8 @@ import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
 import moviesSearchFilter from '../../utils/moviesSearchFilter';
+import moviesAmountController from '../../utils/moviesAmountController';
+import windowWidthListener from '../../utils/windowWidthListener';
 
 import authApi from '../../utils/authApi';
 import userApi from '../../utils/userApi';
@@ -53,6 +55,10 @@ function App() {
   const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
 
   const [ findMoviesList, setFindMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);
+    
+  const [ showedMoviesList,  setShowedMoviesList ] = React.useState([]);
+
+  const [ currentWindowWidth, setCurrentWindowWidth ] = React.useState(window.innerWidth);
 
   const history = useHistory();
 
@@ -61,8 +67,42 @@ function App() {
     .then((user) => handleAuthorization(user.email, user.data))
     .catch((err) => console.log(err));
 
+    windowWidthListener.setListener((evt) => {
+      setCurrentWindowWidth(evt.target.innerWidth);
+    });
+
+    return () => {
+      windowWidthListener.removeListener((evt) => {
+        setCurrentWindowWidth(evt.target.innerWidth);
+      });
+    }
     // eslint-disable-next-line
   }, []);
+
+  React.useEffect(() => {
+    userApi.getUserCredentials()
+    .then((user) => handleAuthorization(user.email, user.data))
+    .catch((err) => console.log(err));
+
+    windowWidthListener.setListener(() => {
+      setTimeout(() => handleWindowWidth, 10000)
+    });
+
+    return () => {
+      windowWidthListener.removeListener(() => {
+        setTimeout(() => handleWindowWidth, 10000)
+      });
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  React.useEffect(() => {
+    console.log(currentWindowWidth);
+  }, [currentWindowWidth]);
+
+  function handleWindowWidth(evt) {
+    setCurrentWindowWidth(evt.target.innerWidth);
+  }
 
   function handleAuthorization(email, name) {
     currentUser.email = email;
@@ -122,7 +162,7 @@ function App() {
 
   function handleMoviesSearch(searchQuery, isShort) {
     setIsLoading(true);
-    
+
     moviesApi.searchMovies()
     .then((moviesList) => {
       const filteredMoviesList = moviesSearchFilter(moviesList, searchQuery, isShort);
@@ -134,6 +174,10 @@ function App() {
     })
     .catch((err) => console.log(err))
     .finally(() => setIsLoading(false));
+  }
+
+  function handleUploaderClick() {
+    setShowedMoviesList(showedMoviesList.concat(moviesAmountController(findMoviesList, showedMoviesList, currentWindowWidth)));
   }
 
   function handleMenuButtonClick() {
@@ -163,7 +207,9 @@ function App() {
                   onMoviesSearch={ handleMoviesSearch }
                   isMoviesLoading={ isLoading }
                   findMoviesList={ findMoviesList }
+                  showedMoviesList={ showedMoviesList }
                   isSearchButtonClicked={ isMoviesSearchButtonClicked }
+                  onUploaderClick={ handleUploaderClick }
                 />
                 <Footer />
               </ProtectedRoute>
