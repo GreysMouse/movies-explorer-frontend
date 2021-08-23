@@ -12,13 +12,17 @@ function Movies(props) {
         disabled={ props.isMoviesLoading }
       />
       {
-        (props.findMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
-          findMoviesList={ props.findMoviesList }
-          showedMoviesList={ props.showedMoviesList }
+        (props.foundMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
+          foundMoviesList={ props.foundMoviesList }
+          uploadedMoviesList={ props.uploadedMoviesList }
           isMoviesLoading={ props.isMoviesLoading }
         />
       }
-      <MoviesUploader onButtonClick={ props.onUploaderClick } />
+      {
+        props.uploadedMoviesList.length !== props.foundMoviesList.length && <MoviesUploader
+          onButtonClick={ props.onUploaderClick }
+        />
+      }
     </main>
   );
 }

@@ -1,10 +1,10 @@
 class WindowWidthListener {
-  setListener(widthHandler) {
-    window.addEventListener('resize', widthHandler);
+  setListener(windowWidthHandler) {
+    window.addEventListener('resize', windowWidthHandler);
   }
 
-  removeListener(widthHandler) {
-    window.removeEventListener('resize', widthHandler);
+  removeListener(windowWidthHandler) {
+    window.removeEventListener('resize', windowWidthHandler);
   }
 }
 

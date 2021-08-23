@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
-import moviesSearchFilter from '../../utils/moviesSearchFilter';
-import moviesAmountController from '../../utils/moviesAmountController';
 import windowWidthListener from '../../utils/windowWidthListener';
+import moviesSearchFilter from '../../utils/moviesSearchFilter';
+import moviesCardsHandler from '../../utils/moviesCardsHandler';
 
 import authApi from '../../utils/authApi';
 import userApi from '../../utils/userApi';
@@ -31,6 +31,12 @@ import './app.css';
 import './app__container.css';
 
 function App() {
+  const history = useHistory();
+
+  const [ currentWindowWidth, setCurrentWindowWidth ] = React.useState(window.innerWidth);
+  const [ isWindowWidthResizing, setIsWindowWidthResizing ] = React.useState(false);
+  const [ isLoading, setIsLoading ] = React.useState(false);
+
   const [ currentUser, setCurrentUser ] = React.useState({
     name: 'Mouse Greys',
     email: 'greys.mouse@yandex.ru',
@@ -47,61 +53,45 @@ function App() {
       { name: 'Одностраничное приложение', link: 'https://github.com/GreysMouse/react-mesto-api-full/' }
     ]
   });
-
+  
   const [ isLoggedIn, setIsLoggedIn ] = React.useState(true);
-  const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
-  const [ isLoading, setIsLoading ] = React.useState(false);
 
+  const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
   const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
 
-  const [ findMoviesList, setFindMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);
-    
-  const [ showedMoviesList,  setShowedMoviesList ] = React.useState([]);
-
-  const [ currentWindowWidth, setCurrentWindowWidth ] = React.useState(window.innerWidth);
-
-  const history = useHistory();
+  const [ foundMoviesList, setFoundMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);   
+  const [ uploadedMoviesList,  setUploadedMoviesList ] = React.useState([]);
 
   React.useEffect(() => {
     userApi.getUserCredentials()
     .then((user) => handleAuthorization(user.email, user.data))
     .catch((err) => console.log(err));
 
-    windowWidthListener.setListener((evt) => {
-      setCurrentWindowWidth(evt.target.innerWidth);
-    });
+    windowWidthListener.setListener(handleWindowWidth);
 
     return () => {
-      windowWidthListener.removeListener((evt) => {
-        setCurrentWindowWidth(evt.target.innerWidth);
-      });
+      windowWidthListener.removeListener(handleWindowWidth);
     }
     // eslint-disable-next-line
   }, []);
 
   React.useEffect(() => {
-    userApi.getUserCredentials()
-    .then((user) => handleAuthorization(user.email, user.data))
-    .catch((err) => console.log(err));
+    const movieCards = moviesCardsHandler.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
 
-    windowWidthListener.setListener(() => {
-      setTimeout(() => handleWindowWidth, 10000)
-    });
+    setUploadedMoviesList(movieCards);
 
-    return () => {
-      windowWidthListener.removeListener(() => {
-        setTimeout(() => handleWindowWidth, 10000)
-      });
-    }
     // eslint-disable-next-line
-  }, []);
-
-  React.useEffect(() => {
-    console.log(currentWindowWidth);
-  }, [currentWindowWidth]);
+  }, [ currentWindowWidth ]);
 
   function handleWindowWidth(evt) {
-    setCurrentWindowWidth(evt.target.innerWidth);
+    if (!isWindowWidthResizing) {
+      setIsWindowWidthResizing(true);
+
+      setTimeout(() => {
+        setCurrentWindowWidth(evt.target.innerWidth);
+        setIsWindowWidthResizing(false);
+      }, 1000);
+    }
   }
 
   function handleAuthorization(email, name) {
@@ -167,7 +157,7 @@ function App() {
     .then((moviesList) => {
       const filteredMoviesList = moviesSearchFilter(moviesList, searchQuery, isShort);
 
-      setFindMoviesList(filteredMoviesList);
+      setFoundMoviesList(filteredMoviesList);
       setIsMoviesSearchButtonClicked(true);
 
       localStorage.setItem('movies', JSON.stringify(filteredMoviesList));
@@ -176,12 +166,14 @@ function App() {
     .finally(() => setIsLoading(false));
   }
 
-  function handleUploaderClick() {
-    setShowedMoviesList(showedMoviesList.concat(moviesAmountController(findMoviesList, showedMoviesList, currentWindowWidth)));
-  }
-
   function handleMenuButtonClick() {
     setIsMenuOpen(!isMenuOpen);
+  }
+
+  function handleMoviesUploaderClick() {
+    const uploadedMovieCards = moviesCardsHandler.uploadCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
+
+    setUploadedMoviesList(uploadedMoviesList.concat(uploadedMovieCards));
   }
 
   return (
@@ -204,12 +196,12 @@ function App() {
               <ProtectedRoute path="/movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
                 <Movies
-                  onMoviesSearch={ handleMoviesSearch }
                   isMoviesLoading={ isLoading }
-                  findMoviesList={ findMoviesList }
-                  showedMoviesList={ showedMoviesList }
-                  isSearchButtonClicked={ isMoviesSearchButtonClicked }
-                  onUploaderClick={ handleUploaderClick }
+                  isSearchButtonClicked={ isMoviesSearchButtonClicked }  
+                  foundMoviesList={ foundMoviesList }
+                  uploadedMoviesList={ uploadedMoviesList }
+                  onMoviesSearch={ handleMoviesSearch }
+                  onUploaderClick={ handleMoviesUploaderClick }            
                 />
                 <Footer />
               </ProtectedRoute>
