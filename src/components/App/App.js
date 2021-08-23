@@ -81,7 +81,7 @@ function App() {
     setUploadedMoviesList(movieCards);
 
     // eslint-disable-next-line
-  }, [ currentWindowWidth ]);
+  }, [ foundMoviesList, currentWindowWidth ]);
 
   function handleWindowWidth(evt) {
     if (!isWindowWidthResizing) {
