@@ -16,6 +16,7 @@ function Movies(props) {
           foundMoviesList={ props.foundMoviesList }
           uploadedMoviesList={ props.uploadedMoviesList }
           isMoviesLoading={ props.isMoviesLoading }
+          onMovieSave={ props.onMovieSave }
         />
       }
       {

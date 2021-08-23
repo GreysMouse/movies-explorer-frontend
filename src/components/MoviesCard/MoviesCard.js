@@ -19,23 +19,24 @@ function MoviesCard(props) {
   return (
     <div className="movie-card">
       <div className="movie-card__header">
-        <p className="movie-card__caption">{ props.cardData.nameRU || props.cardData.nameEN }</p>
-        <p className="movie-card__duration-info">{ props.cardData.duration + ' минут(ы)' }</p>
+        <p className="movie-card__caption">{ props.data.nameRU || props.data.nameEN }</p>
+        <p className="movie-card__duration-info">{ props.data.duration + ' минут(ы)' }</p>
       </div>
       <a
         className="movie-card__link"
-        href={ props.cardData.trailerLink }
+        href={ props.data.trailerLink }
         target="_blank"
         rel="noreferrer"
       >
         <img
           className="movie-card__thumbnail"
-          src={ 'https://api.nomoreparties.co' + props.cardData.image.url }
+          src={ 'https://api.nomoreparties.co' + props.data.image.url }
           alt="Постер фильма"
         />
       </a>
       <button
         className={ 'movie-card__add-button ' + buttonAddClass }
+        onClick={ props.onSave }
       >
         { props.state ? '' : 'Сохранить' }
       </button>

@@ -9,18 +9,14 @@ function MoviesCardList(props) {
   return (
     <section className={ 'movies-card-list ' + (props.addClasses || '')}>
       {
-        // props.isMoviesLoading ? <Preloader /> :
-        // props.findMoviesList.length ? props.findMoviesList.map((movie) => {
-        //   return (
-        //     <MoviesCard key={ movie.id } cardData={ movie.data } />
-        //   );
-        // }) : 
-        // <p className="movies-card-list__text">Ничего не найдено</p>
-
         props.isMoviesLoading ? <Preloader /> :
         props.foundMoviesList.length ? props.uploadedMoviesList.map((movie) => {
           return (
-            <MoviesCard key={ movie.id } cardData={ movie.data } />
+            <MoviesCard
+              key={ movie.id }
+              data={ movie.data }
+              onSave={ props.onMovieSave }
+            />
           );
         }) : 
         <p className="movies-card-list__text">Ничего не найдено</p>

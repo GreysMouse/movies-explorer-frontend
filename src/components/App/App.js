@@ -61,6 +61,7 @@ function App() {
 
   const [ foundMoviesList, setFoundMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);   
   const [ uploadedMoviesList,  setUploadedMoviesList ] = React.useState([]);
+  const [ savedMoviesList,  setSavedMoviesList ] = React.useState([]);
 
   React.useEffect(() => {
     userApi.getUserCredentials()
@@ -166,6 +167,42 @@ function App() {
     .finally(() => setIsLoading(false));
   }
 
+  function handleMovieSave(movie) {
+    moviesApi.saveMovie({
+      country: movie.country,
+      director: movie.country,
+      duration: movie.country,
+      year: movie.country,
+      description: movie.country,
+      image: movie.country,
+      trailer: movie.country,
+      thumbnail: movie.country,
+      movieId: movie.country,
+      nameRU: movie.country,
+      nameEN: movie.country
+    })
+    .then((movie) => {
+      setSavedMoviesList([{ ...movie, owner: movie.owner }, ...savedMoviesList]);
+    })
+    .catch((err) => console.log(err))
+  }
+
+//   {
+//     "_id": "6123e6f8993da43bdea78ffb",
+//     "country": "qwqw",
+//     "director": "qwqw",
+//     "duration": 10,
+//     "year": "1222",
+//     "description": "wdwd",
+//     "image": "http://wdwd.com",
+//     "trailer": "http://wdwd.com",
+//     "thumbnail": "http://wdwd.com",
+//     "movieId": 21,
+//     "nameRU": "wdwd",
+//     "nameEN": "wdwd",
+//     "owner": "61050918d24eab50165d2ab4"
+// }
+
   function handleMenuButtonClick() {
     setIsMenuOpen(!isMenuOpen);
   }
@@ -201,6 +238,7 @@ function App() {
                   foundMoviesList={ foundMoviesList }
                   uploadedMoviesList={ uploadedMoviesList }
                   onMoviesSearch={ handleMoviesSearch }
+                  onMovieSave={ handleMovieSave }
                   onUploaderClick={ handleMoviesUploaderClick }            
                 />
                 <Footer />
