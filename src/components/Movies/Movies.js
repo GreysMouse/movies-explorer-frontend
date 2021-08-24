@@ -15,8 +15,10 @@ function Movies(props) {
         (props.foundMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
           foundMoviesList={ props.foundMoviesList }
           uploadedMoviesList={ props.uploadedMoviesList }
+          savedMoviesList={ props.savedMoviesList }
           isMoviesLoading={ props.isMoviesLoading }
           onMovieSave={ props.onMovieSave }
+          onMovieDelete={ props.onMovieDelete }
         />
       }
       {

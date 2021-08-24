@@ -7,15 +7,17 @@ import './movies-card-list__text.css';
 function MoviesCardList(props) {
 
   return (
-    <section className={ 'movies-card-list ' + (props.addClasses || '')}>
+    <section className={ 'movies-card-list ' + (props.addClasses || '') }>
       {
         props.isMoviesLoading ? <Preloader /> :
         props.foundMoviesList.length ? props.uploadedMoviesList.map((movie) => {
           return (
             <MoviesCard
               key={ movie.id }
-              data={ movie.data }
+              movie={ movie }
+              savedMoviesList={ props.savedMoviesList }
               onSave={ props.onMovieSave }
+              onDelete={ props.onMovieDelete }
             />
           );
         }) : 

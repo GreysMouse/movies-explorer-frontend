@@ -61,25 +61,43 @@ function App() {
 
   const [ foundMoviesList, setFoundMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);   
   const [ uploadedMoviesList,  setUploadedMoviesList ] = React.useState([]);
-  const [ savedMoviesList,  setSavedMoviesList ] = React.useState([]);
+  const [ savedMoviesList,  setSavedMoviesList ] = React.useState([{
+    "_id": "6106e4373d88d5677e9bd7f0",   
+    "country": "Великобритания",
+    "director": "Джульен Темпл",
+    "duration": 104,
+    "year": "2009",
+    "description": "кий TimeOut, «безумно захватывающий фильм, даже если вы не любите музыку».",
+    "image": "/uploads/Oil_City_Confidential_676986530_large_652c54fa63.jpeg",
+    "trailer": "https://www.youtube.com/watch?v=7CZMLs8Ke40",
+    "thumbnail": "/uploads/thumbnail_Oil_City_Confidential_676986530_large_652c54fa63.jpeg",
+    "movieId": 40,
+    "nameRU": "Город Нефти",
+    "nameEN": "Oil City Confidential"
+  }]);
 
   React.useEffect(() => {
+    windowWidthListener.setListener(handleWindowWidth);
+
     userApi.getUserCredentials()
     .then((user) => handleAuthorization(user.email, user.data))
     .catch((err) => console.log(err));
 
-    windowWidthListener.setListener(handleWindowWidth);
+    moviesApi.getSavedMovies()
+    .then((movies) => setSavedMoviesList(movies))
+    .catch((err) => console.log(err));
 
     return () => {
       windowWidthListener.removeListener(handleWindowWidth);
     }
+
     // eslint-disable-next-line
   }, []);
 
   React.useEffect(() => {
-    const movieCards = moviesCardsHandler.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
-
-    setUploadedMoviesList(movieCards);
+    setUploadedMoviesList((uploadedMoviesList) => {
+      return moviesCardsHandler.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
+    });
 
     // eslint-disable-next-line
   }, [ foundMoviesList, currentWindowWidth ]);
@@ -167,41 +185,29 @@ function App() {
     .finally(() => setIsLoading(false));
   }
 
-  function handleMovieSave(movie) {
-    moviesApi.saveMovie({
-      country: movie.country,
-      director: movie.country,
-      duration: movie.country,
-      year: movie.country,
-      description: movie.country,
-      image: movie.country,
-      trailer: movie.country,
-      thumbnail: movie.country,
-      movieId: movie.country,
-      nameRU: movie.country,
-      nameEN: movie.country
+  function handleMovieSave({
+    country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN
+  }) {
+    return moviesApi.saveMovie({
+      country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN
     })
     .then((movie) => {
-      setSavedMoviesList([{ ...movie, owner: movie.owner }, ...savedMoviesList]);
+      setSavedMoviesList([ movie, ...savedMoviesList ]);
+      
+      return Promise.resolve(movie);
     })
-    .catch((err) => console.log(err))
   }
 
-//   {
-//     "_id": "6123e6f8993da43bdea78ffb",
-//     "country": "qwqw",
-//     "director": "qwqw",
-//     "duration": 10,
-//     "year": "1222",
-//     "description": "wdwd",
-//     "image": "http://wdwd.com",
-//     "trailer": "http://wdwd.com",
-//     "thumbnail": "http://wdwd.com",
-//     "movieId": 21,
-//     "nameRU": "wdwd",
-//     "nameEN": "wdwd",
-//     "owner": "61050918d24eab50165d2ab4"
-// }
+  function handleMovieDelete(movieId) {
+    return moviesApi.deleteMovie(movieId)
+    .then((movie) => {
+      setSavedMoviesList((savedMoviesList) => {
+        savedMoviesList.filter((savedMovie) => savedMovie._id !== movieId);
+      });
+
+      return Promise.resolve(movie);
+    })
+  }
 
   function handleMenuButtonClick() {
     setIsMenuOpen(!isMenuOpen);
@@ -237,8 +243,10 @@ function App() {
                   isSearchButtonClicked={ isMoviesSearchButtonClicked }  
                   foundMoviesList={ foundMoviesList }
                   uploadedMoviesList={ uploadedMoviesList }
+                  savedMoviesList={ savedMoviesList }
                   onMoviesSearch={ handleMoviesSearch }
                   onMovieSave={ handleMovieSave }
+                  onMovieDelete={ handleMovieDelete }
                   onUploaderClick={ handleMoviesUploaderClick }            
                 />
                 <Footer />

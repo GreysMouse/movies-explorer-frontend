@@ -19,10 +19,7 @@ function moviesSearchFilter(moviesList, searchQuery, isShort) {
       }
     }
 
-    if (include) filteredMoviesList.push({
-      id: movie.id,
-      data: movie
-    });
+    if (include) filteredMoviesList.push(movie);
   }
   
   return filteredMoviesList;

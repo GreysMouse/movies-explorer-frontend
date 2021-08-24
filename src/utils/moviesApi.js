@@ -33,26 +33,14 @@ class MoviesApi {
     .then(this._checkResponse);
   }
 
-  saveMovie({ country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN }) {
+  saveMovie(movie) {
     return fetch(`${ this._baseURL }/movies`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        country,
-        director,
-        duration,
-        year,
-        description,
-        image,
-        trailer,
-        thumbnail,
-        movieId,
-        nameRU,
-        nameEN
-      })
+      body: JSON.stringify(movie)
     })
     .then(this._checkResponse);
   }
