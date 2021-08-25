@@ -1,4 +1,4 @@
-class MoviesCardsHandler {
+class MoviesUploader {
   getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth) {
     let cardsNum = 12;
 
@@ -22,6 +22,6 @@ class MoviesCardsHandler {
   }
 }
 
-const moviesCardsHandler = new MoviesCardsHandler();
+const moviesUploader = new MoviesUploader();
 
-export default moviesCardsHandler;
+export default moviesUploader;

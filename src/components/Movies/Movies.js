@@ -8,11 +8,14 @@ function Movies(props) {
   return (
     <main className="movies">
       <SearchForm
+        page="movies"
         onMoviesSearch={ props.onMoviesSearch }
         disabled={ props.isMoviesLoading }
       />
       {
-        (props.foundMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
+        // founded
+        (props.uploadedMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
+          page="movies"
           foundMoviesList={ props.foundMoviesList }
           uploadedMoviesList={ props.uploadedMoviesList }
           savedMoviesList={ props.savedMoviesList }

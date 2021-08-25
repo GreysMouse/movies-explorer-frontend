@@ -1,8 +1,9 @@
-import { BASE_URL } from '../config';
+import { MAIN_API_BASE_URL, MOVIES_API_BASE_URL } from '../config';
 
 class MoviesApi {
   constructor(options) {
-    this._baseURL = options.baseURL;
+    this._mainBaseURL = options.mainBaseURL;
+    this._moviesBaseURL = options.moviesBaseURL;
   }
 
   _checkResponse(res) {
@@ -13,7 +14,7 @@ class MoviesApi {
   }
   
   searchMovies() {
-    return fetch('https://api.nomoreparties.co/beatfilm-movies/', {
+    return fetch(`${ this._moviesBaseURL }/beatfilm-movies`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -23,7 +24,7 @@ class MoviesApi {
   }
 
   getSavedMovies() {
-    return fetch(`${ this._baseURL }/movies`, {
+    return fetch(`${ this._mainBaseURL }/movies`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -33,20 +34,22 @@ class MoviesApi {
     .then(this._checkResponse);
   }
 
-  saveMovie(movie) {
-    return fetch(`${ this._baseURL }/movies`, {
+  saveMovie({ country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN }) {
+    return fetch(`${ this._mainBaseURL }/movies`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(movie)
+      body: JSON.stringify({
+        country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN
+      })
     })
     .then(this._checkResponse);
   }
 
   deleteMovie(movieId) {
-    return fetch(`${ this._baseURL }/movies/${ movieId }`, {
+    return fetch(`${ this._mainBaseURL }/movies/${ movieId }`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
@@ -58,7 +61,8 @@ class MoviesApi {
 }
 
 const moviesApi = new MoviesApi({
-  baseURL: BASE_URL
+  mainBaseURL: MAIN_API_BASE_URL,
+  moviesBaseURL: MOVIES_API_BASE_URL
 });
 
 export default moviesApi;

@@ -2,8 +2,8 @@ import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
 import windowWidthListener from '../../utils/windowWidthListener';
-import moviesSearchFilter from '../../utils/moviesSearchFilter';
-import moviesCardsHandler from '../../utils/moviesCardsHandler';
+import moviesFilter from '../../utils/moviesFilter';
+import moviesUploader from '../../utils/moviesUploader';
 
 import authApi from '../../utils/authApi';
 import userApi from '../../utils/userApi';
@@ -59,22 +59,11 @@ function App() {
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
   const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
 
-  const [ foundMoviesList, setFoundMoviesList ] = React.useState(JSON.parse(localStorage.getItem('movies')) || []);   
-  const [ uploadedMoviesList,  setUploadedMoviesList ] = React.useState([]);
-  const [ savedMoviesList,  setSavedMoviesList ] = React.useState([{
-    "_id": "6106e4373d88d5677e9bd7f0",   
-    "country": "Великобритания",
-    "director": "Джульен Темпл",
-    "duration": 104,
-    "year": "2009",
-    "description": "кий TimeOut, «безумно захватывающий фильм, даже если вы не любите музыку».",
-    "image": "/uploads/Oil_City_Confidential_676986530_large_652c54fa63.jpeg",
-    "trailer": "https://www.youtube.com/watch?v=7CZMLs8Ke40",
-    "thumbnail": "/uploads/thumbnail_Oil_City_Confidential_676986530_large_652c54fa63.jpeg",
-    "movieId": 40,
-    "nameRU": "Город Нефти",
-    "nameEN": "Oil City Confidential"
-  }]);
+  const [ foundMoviesList, setFoundMoviesList ] = React.useState(() => {
+    return JSON.parse(localStorage.getItem('movies')) || []
+  });   
+  const [ uploadedMoviesList, setUploadedMoviesList ] = React.useState([]);
+  const [ savedMoviesList,  setSavedMoviesList ] = React.useState([]);
 
   React.useEffect(() => {
     windowWidthListener.setListener(handleWindowWidth);
@@ -96,13 +85,16 @@ function App() {
 
   React.useEffect(() => {
     setUploadedMoviesList((uploadedMoviesList) => {
-      return moviesCardsHandler.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
+      return moviesUploader.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
     });
 
     // eslint-disable-next-line
   }, [ foundMoviesList, currentWindowWidth ]);
 
   function handleWindowWidth(evt) {
+    // console.log('f  ', foundMoviesList)
+    // console.log('u  ', uploadedMoviesList)
+    // console.log('s  ', savedMoviesList)
     if (!isWindowWidthResizing) {
       setIsWindowWidthResizing(true);
 
@@ -113,22 +105,25 @@ function App() {
     }
   }
 
-  function handleAuthorization(email, name) {
-    currentUser.email = email;
-    currentUser.name = name;
-    setCurrentUser(currentUser);
+  function handleAuthorization({ email, name }) {
+    setCurrentUser((currentUser) => {
+      currentUser.name = name;
+      currentUser.email = email;
+
+      return currentUser;
+    });
 
     setIsLoggedIn(true);
 
-    localStorage.removeItem('movies');
+    // localStorage.removeItem('movies');
 
     history.push('/movies');
 
     console.log('Выполнен вход в аккаунт');
   }
 
-  function handleRegister({ email, password, name }) {
-    authApi.register({ email, password, name })
+  function handleRegister(user) {
+    authApi.register(user)
     .then(() => {
       history.push('/signin');
 
@@ -137,9 +132,9 @@ function App() {
     .catch((err) => console.log(err));
   }
 
-  function handleLogin({ email, password }) {
-    authApi.login({ email, password })
-    .then((data) => handleAuthorization(data.email, data.name))
+  function handleLogin(user) {
+    authApi.login(user)
+    .then((user) => handleAuthorization(user))
     .catch((err) => console.log(err));
   }
 
@@ -157,12 +152,13 @@ function App() {
     .catch((err) => console.log(err));
   }
 
-  function handleUserCredentialsUpdate({ email, name }) {
-    userApi.updateUserCredentials({ email, name })
-    .then((user) => {
-      currentUser.name = user.name;
-      currentUser.email = user.email;
-      setCurrentUser(currentUser);
+  function handleUserCredentialsUpdate(credentials) {
+    userApi.updateUserCredentials(credentials)
+    .then((data) => {
+      setCurrentUser((currentUser) => {
+        currentUser.name = data.name;
+        currentUser.email = data.email;
+      });
       
       console.log('Данные успешно обновлены');
     })
@@ -174,7 +170,7 @@ function App() {
 
     moviesApi.searchMovies()
     .then((moviesList) => {
-      const filteredMoviesList = moviesSearchFilter(moviesList, searchQuery, isShort);
+      const filteredMoviesList = moviesFilter.propertiesFilter(moviesFilter.searchFilter(moviesList, searchQuery, isShort));
 
       setFoundMoviesList(filteredMoviesList);
       setIsMoviesSearchButtonClicked(true);
@@ -185,28 +181,21 @@ function App() {
     .finally(() => setIsLoading(false));
   }
 
-  function handleMovieSave({
-    country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN
-  }) {
-    return moviesApi.saveMovie({
-      country, director, duration, year, description, image, trailer, thumbnail, movieId, nameRU, nameEN
-    })
-    .then((movie) => {
-      setSavedMoviesList([ movie, ...savedMoviesList ]);
-      
-      return Promise.resolve(movie);
-    })
+  function handleMovieSave(movie) {
+    moviesApi.saveMovie(movie)
+    .then((movie) => setSavedMoviesList([ movie, ...savedMoviesList ]))
+    .catch((err) => console.log(err))
+    .finally(() =>console.log(savedMoviesList))
   }
 
   function handleMovieDelete(movieId) {
-    return moviesApi.deleteMovie(movieId)
-    .then((movie) => {
-      setSavedMoviesList((savedMoviesList) => {
-        savedMoviesList.filter((savedMovie) => savedMovie._id !== movieId);
-      });
-
-      return Promise.resolve(movie);
-    })
+    moviesApi.deleteMovie(movieId)
+    .then(() => setSavedMoviesList((savedMoviesList) => {
+        return savedMoviesList.filter((savedMovie) => savedMovie._id !== movieId);
+      })
+    )
+    .catch((err) => console.log(err))
+    .finally(() =>console.log(savedMoviesList))
   }
 
   function handleMenuButtonClick() {
@@ -214,7 +203,7 @@ function App() {
   }
 
   function handleMoviesUploaderClick() {
-    const uploadedMovieCards = moviesCardsHandler.uploadCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
+    const uploadedMovieCards = moviesUploader.uploadCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
 
     setUploadedMoviesList(uploadedMoviesList.concat(uploadedMovieCards));
   }
@@ -253,7 +242,12 @@ function App() {
               </ProtectedRoute>
               <ProtectedRoute path="/saved-movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <SavedMovies onMoviesSearch={ handleMoviesSearch } />
+                <SavedMovies
+                  isMoviesLoading={ isLoading }
+                  savedMoviesList={ savedMoviesList }
+                  onMovieSave={ handleMovieSave }
+                  onMovieDelete={ handleMovieDelete }
+                />
                 <Footer />
               </ProtectedRoute>
               <ProtectedRoute path="/profile" defaultPath="/">

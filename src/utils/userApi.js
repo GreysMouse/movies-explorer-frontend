@@ -1,4 +1,4 @@
-import { BASE_URL } from '../config';
+import { MAIN_API_BASE_URL } from '../config';
 
 class UserApi {
   constructor(options) {
@@ -37,7 +37,7 @@ class UserApi {
 }
 
 const userApi = new UserApi({
-  baseURL: BASE_URL
+  baseURL: MAIN_API_BASE_URL
 });
 
 export default userApi;

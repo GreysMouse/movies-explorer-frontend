@@ -1,4 +1,4 @@
-import { BASE_URL } from '../config';
+import { MAIN_API_BASE_URL } from '../config';
 
 class AuthApi {
   constructor(options) {
@@ -48,7 +48,7 @@ class AuthApi {
 }
 
 const authApi = new AuthApi({
-  baseURL: BASE_URL
+  baseURL: MAIN_API_BASE_URL
 });
 
 export default authApi;
