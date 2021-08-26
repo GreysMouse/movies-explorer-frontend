@@ -16,11 +16,11 @@ function ProfileForm(props) {
         { props.spanText }
       </span>
       <button
-        className={ 'profile-form__submit-button ' + (props.isFormValid ? '' : 'profile-form__submit-button_disabled') } 
+        className={ 'profile-form__submit-button ' + (props.isFormValid && !props.isDataLoading ? '' : 'profile-form__submit-button_disabled') } 
         onClick={ props.onSubmit }
-        disabled={ !props.isFormValid }
+        disabled={ !props.isFormValid || props.isDataLoading }
       >
-        Редактировать
+        { props.isDataLoading ? 'Сохранение...' : 'Редактировать' }
       </button>
     </form>
   );

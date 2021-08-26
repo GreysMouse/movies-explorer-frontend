@@ -38,6 +38,7 @@ function App() {
   const [ isWindowWidthResizing, setIsWindowWidthResizing ] = React.useState(false);
   const [ isLoading, setIsLoading ] = React.useState(false);
   const [ infoMessage, setInfoMessage ] = React.useState('');
+  const [ isInfoPopupOpen, setIsInfoPopupOpen ] = React.useState(false);
 
   const [ currentUser, setCurrentUser ] = React.useState({
     name: 'Mouse Greys',
@@ -70,11 +71,11 @@ function App() {
 
     userApi.getUserCredentials()
     .then((user) => handleAuthorization(user))
-    .catch((err) => errorHandler(err, 'Необходима авторизация'));
+    .catch((err) => console.log(errorHandler(err, 'Необходима авторизация')));
 
     moviesApi.getSavedMovies()
     .then((movies) => setSavedMoviesList(movies))
-    .catch((err) => errorHandler(err, 'Необходима авторизация'));
+    .catch((err) => console.log(errorHandler(err, 'Необходима авторизация')));
 
     return () => {
       windowWidthListener.removeListener(handleWindowWidth);
@@ -89,6 +90,10 @@ function App() {
     });
   }, [ foundMoviesList, currentWindowWidth ]);
 
+  React.useEffect(() => {
+    if (isInfoPopupOpen) setTimeout(() => setIsInfoPopupOpen(false), 5000);
+  }, [ isInfoPopupOpen ]);
+
   function handleWindowWidth(evt) {
     if (!isWindowWidthResizing) {
       setIsWindowWidthResizing(true);
@@ -98,6 +103,10 @@ function App() {
         setIsWindowWidthResizing(false);
       }, 1000);
     }
+  }
+
+  function handleInfoPopupClick() {
+    setIsInfoPopupOpen(false);
   }
 
   function handleAuthorization({ email, name }) {
@@ -121,11 +130,21 @@ function App() {
     
     authApi.register(user)
     .then(() => {
-      console.log('Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти');
+      const message = 'Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти';
+
+      setIsInfoPopupOpen(true);
+      setInfoMessage(message);
+      console.log(message);
 
       history.push('/signin');
     })
-    .catch((err) => errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует'))
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    })
     .finally(() => setIsLoading(false));
   }
 
@@ -136,29 +155,56 @@ function App() {
     .then((user) => {
       localStorage.removeItem('movies');
       handleAuthorization(user);
+
+      setIsInfoPopupOpen(true);
+      setInfoMessage(`Выполнен вход в аккаунт ${ user.email }`);
     })
-    .catch((err) => errorHandler(err, 'Неверный логин или пароль'));
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Неверный логин или пароль');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    })
+    .finally(() => setIsLoading(false));
   }
 
   function handleLogout() {
     authApi.logout()
     .then(() => {
-      console.log(`Выполнен выход из аккаунта ${ currentUser.email }`);
+      const message = `Выполнен выход из аккаунта ${ currentUser.email }`;
+
+      setIsInfoPopupOpen(true);
+      setInfoMessage(message);
+      console.log(message);
 
       setIsLoggedIn(false);
       localStorage.removeItem('movies');
       history.push('/');
     })
-    .catch((err) => errorHandler(err, 'Не удалось выполнить выход из аккаунта'));
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Не удалось выполнить выход из аккаунта');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    });
   }
 
   function handleUserCredentialsUpdate(credentials) {
+    setIsLoading(true);
+
     userApi.updateUserCredentials(credentials)
     .then((user) => {
-      console.log(`${ user.name !== currentUser.name ? 'Новое имя: ' + user.name + '\n' : ''
+      const message = `${
+        user.name !== currentUser.name ? 'Новое имя: ' + user.name + '\n' : ''
       }${
         user.email !== currentUser.email ? 'Новый E-mail: ' + user.email : ''
-      }`);
+      }`;     
+
+      setIsInfoPopupOpen(true);
+      setInfoMessage(message);
+      console.log(message);
 
       setCurrentUser((currentUser) => {
         currentUser.name = user.name;
@@ -167,7 +213,14 @@ function App() {
         return currentUser;
       });
     })
-    .catch((err) => errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует'));
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    })
+    .finally(() => setIsLoading(false));
   }
 
   function handleMoviesSearch(searchQuery, isShort) {
@@ -182,14 +235,26 @@ function App() {
 
       localStorage.setItem('movies', JSON.stringify(filteredMoviesList));
     })
-    .catch((err) => errorHandler(err, 'Не удалось выполнить поиск фильмов'))
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    })
     .finally(() => setIsLoading(false));
   }
 
   function handleMovieSave(movie) {
     moviesApi.saveMovie(movie)
     .then((movie) => setSavedMoviesList([ movie, ...savedMoviesList ]))
-    .catch((err) => errorHandler(err, 'Карточка с таким идентификатором уже добавлена в избранное'));
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Карточка с таким идентификатором уже добавлена в избранное');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    });
   }
 
   function handleMovieDelete(movieId) {
@@ -198,7 +263,13 @@ function App() {
         return savedMoviesList.filter((savedMovie) => savedMovie._id !== movieId);
       })
     )
-    .catch((err) => errorHandler(err, 'Не удалось удалить карточку'));
+    .catch((err) => {
+      const errorMessage = errorHandler(err, 'Не удалось удалить карточку');
+      
+      setIsInfoPopupOpen(true);
+      setInfoMessage(errorMessage);
+      console.log(errorMessage);
+    });
   }
 
   function handleMenuButtonClick() {
@@ -260,6 +331,7 @@ function App() {
               <ProtectedRoute path="/profile" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
                 <Profile
+                  isDataLoading={ isLoading }
                   onUserUpdate={ handleUserCredentialsUpdate }
                   onLogout={ handleLogout }
                   logoutLink="/signin"
@@ -270,7 +342,11 @@ function App() {
               </Route>
             </Switch>
             <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
-            <ErrorInfoPopup isOpen={ false } message={ infoMessage } />
+            <ErrorInfoPopup
+              isOpen={ isInfoPopupOpen }
+              message={ infoMessage }
+              onClick={ handleInfoPopupClick }
+            />
           </div>
         </div>
       </IsLoggedInContext.Provider>

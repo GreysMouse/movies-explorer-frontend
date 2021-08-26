@@ -78,7 +78,7 @@ function Profile(props) {
       email: userEmail || currentUser.email,
       name: userName || currentUser.name
     });
-
+    
     setIsFormValid(false);
   }
 
@@ -90,6 +90,7 @@ function Profile(props) {
           addClasses="profile__form"
           onSubmit={ handleSubmit }
           isFormValid={ isFormValid }
+          isDataLoading={ props.isLoading }
           spanText={ spanText }
           isSpanVisible={ !isValidUserName || !isValidUserEmail }
         >
