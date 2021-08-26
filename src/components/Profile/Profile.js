@@ -78,6 +78,8 @@ function Profile(props) {
       email: userEmail || currentUser.email,
       name: userName || currentUser.name
     });
+
+    setIsFormValid(false);
   }
 
   return (

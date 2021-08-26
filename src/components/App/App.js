@@ -4,6 +4,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import windowWidthListener from '../../utils/windowWidthListener';
 import moviesFilter from '../../utils/moviesFilter';
 import moviesUploader from '../../utils/moviesUploader';
+import errorHandler from '../../utils/errorHandler';
 
 import authApi from '../../utils/authApi';
 import userApi from '../../utils/userApi';
@@ -36,6 +37,7 @@ function App() {
   const [ currentWindowWidth, setCurrentWindowWidth ] = React.useState(window.innerWidth);
   const [ isWindowWidthResizing, setIsWindowWidthResizing ] = React.useState(false);
   const [ isLoading, setIsLoading ] = React.useState(false);
+  const [ infoMessage, setInfoMessage ] = React.useState('');
 
   const [ currentUser, setCurrentUser ] = React.useState({
     name: 'Mouse Greys',
@@ -54,14 +56,12 @@ function App() {
     ]
   });
   
-  const [ isLoggedIn, setIsLoggedIn ] = React.useState(true);
+  const [ isLoggedIn, setIsLoggedIn ] = React.useState(false);
 
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
   const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
-
-  const [ foundMoviesList, setFoundMoviesList ] = React.useState(() => {
-    return JSON.parse(localStorage.getItem('movies')) || []
-  });   
+   
+  const [ foundMoviesList, setFoundMoviesList ] = React.useState([]);  
   const [ uploadedMoviesList, setUploadedMoviesList ] = React.useState([]);
   const [ savedMoviesList,  setSavedMoviesList ] = React.useState([]);
 
@@ -69,12 +69,12 @@ function App() {
     windowWidthListener.setListener(handleWindowWidth);
 
     userApi.getUserCredentials()
-    .then((user) => handleAuthorization(user.email, user.data))
-    .catch((err) => console.log(err));
+    .then((user) => handleAuthorization(user))
+    .catch((err) => errorHandler(err, 'Необходима авторизация'));
 
     moviesApi.getSavedMovies()
     .then((movies) => setSavedMoviesList(movies))
-    .catch((err) => console.log(err));
+    .catch((err) => errorHandler(err, 'Необходима авторизация'));
 
     return () => {
       windowWidthListener.removeListener(handleWindowWidth);
@@ -87,8 +87,6 @@ function App() {
     setUploadedMoviesList((uploadedMoviesList) => {
       return moviesUploader.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
     });
-
-    // eslint-disable-next-line
   }, [ foundMoviesList, currentWindowWidth ]);
 
   function handleWindowWidth(evt) {
@@ -106,6 +104,8 @@ function App() {
   }
 
   function handleAuthorization({ email, name }) {
+    console.log(`Выполнен вход в аккаунт ${ email }`);
+
     setCurrentUser((currentUser) => {
       currentUser.name = name;
       currentUser.email = email;
@@ -114,55 +114,61 @@ function App() {
     });
 
     setIsLoggedIn(true);
-
-    // localStorage.removeItem('movies');
+    
+    setFoundMoviesList(() => {
+      return JSON.parse(localStorage.getItem('movies')) || []
+    });
 
     history.push('/movies');
-
-    console.log('Выполнен вход в аккаунт');
   }
 
   function handleRegister(user) {
     authApi.register(user)
     .then(() => {
-      history.push('/signin');
-
       console.log('Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти');
+
+      history.push('/signin');
     })
-    .catch((err) => console.log(err));
+    .catch((err) => errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует'));
   }
 
   function handleLogin(user) {
     authApi.login(user)
-    .then((user) => handleAuthorization(user))
-    .catch((err) => console.log(err));
+    .then((user) => {
+      localStorage.removeItem('movies');
+      handleAuthorization(user);
+    })
+    .catch((err) => errorHandler(err, 'Неверный логин или пароль'));
   }
 
   function handleLogout() {
     authApi.logout()
     .then(() => {
+      console.log(`Выполнен выход из аккаунта ${ currentUser.email }`);
+
       setIsLoggedIn(false);
-
       localStorage.removeItem('movies');
-
       history.push('/');
-
-      console.log('Выполнен выход из аккаунта');
     })
-    .catch((err) => console.log(err));
+    .catch((err) => errorHandler(err, 'Не удалось выполнить выход из аккаунта'));
   }
 
   function handleUserCredentialsUpdate(credentials) {
     userApi.updateUserCredentials(credentials)
-    .then((data) => {
+    .then((user) => {
+      console.log(`${ user.name !== currentUser.name ? 'Новое имя: ' + user.name + '\n' : ''
+      }${
+        user.email !== currentUser.email ? 'Новый E-mail: ' + user.email : ''
+      }`);
+
       setCurrentUser((currentUser) => {
-        currentUser.name = data.name;
-        currentUser.email = data.email;
+        currentUser.name = user.name;
+        currentUser.email = user.email;
+
+        return currentUser;
       });
-      
-      console.log('Данные успешно обновлены');
     })
-    .catch((err) => console.log(err));
+    .catch((err) => errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует'));
   }
 
   function handleMoviesSearch(searchQuery, isShort) {
@@ -263,7 +269,7 @@ function App() {
               </Route>
             </Switch>
             <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
-            <ErrorInfoPopup isOpen={ false } message="Неверный логин или пароль" />
+            <ErrorInfoPopup isOpen={ false } message={ infoMessage } />
           </div>
         </div>
       </IsLoggedInContext.Provider>
