@@ -27,7 +27,6 @@ function SavedMovies(props) {
       <SearchForm
         page="saved-movies"
         onMoviesSearch={ handleSavedMoviesSearch }
-        disabled={ props.isMoviesLoading }
       />
       {
         props.savedMoviesList.length && <MoviesCardList
@@ -35,7 +34,6 @@ function SavedMovies(props) {
           page="saved-movies"
           savedMoviesList={ props.savedMoviesList }
           filteredMoviesList={ filteredMoviesList }
-          isMoviesLoading={ props.isMoviesLoading } //
           isFiltered={ isFiltered }
           onMovieDelete={ props.onMovieDelete }
         />

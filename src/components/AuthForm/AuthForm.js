@@ -7,11 +7,11 @@ function AuthForm(props) {
       <form className={ 'auth-form ' + (props.addClasses || '') }>
         { props.children }
         <button
-          className={ 'auth-form__submit-button ' + (props.isFormValid ? '' : 'auth-form__submit-button_disabled')}
+          className={ 'auth-form__submit-button ' + (props.isFormValid && !props.isDataLoading ? '' : 'auth-form__submit-button_disabled')}
           onClick={ props.onSubmit }
-          disabled={ !props.isFormValid }
+          disabled={ !props.isFormValid || props.isDataLoading }
         >
-          { props.submitButtonText }
+          { props.isDataLoading ? 'Сохранение...' : props.submitButtonText }
         </button>
       </form>
   );

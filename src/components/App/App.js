@@ -90,9 +90,6 @@ function App() {
   }, [ foundMoviesList, currentWindowWidth ]);
 
   function handleWindowWidth(evt) {
-    // console.log('f  ', foundMoviesList)
-    // console.log('u  ', uploadedMoviesList)
-    // console.log('s  ', savedMoviesList)
     if (!isWindowWidthResizing) {
       setIsWindowWidthResizing(true);
 
@@ -114,25 +111,27 @@ function App() {
     });
 
     setIsLoggedIn(true);
-    
-    setFoundMoviesList(() => {
-      return JSON.parse(localStorage.getItem('movies')) || []
-    });
+    setFoundMoviesList(JSON.parse(localStorage.getItem('movies')) || []);
 
     history.push('/movies');
   }
 
   function handleRegister(user) {
+    setIsLoading(true);
+    
     authApi.register(user)
     .then(() => {
       console.log('Регистрация прошла успешно. Введите адрес электронной почты и пароль, чтобы войти');
 
       history.push('/signin');
     })
-    .catch((err) => errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует'));
+    .catch((err) => errorHandler(err, 'Неверные данные или пользователь с таким E-mail уже существует'))
+    .finally(() => setIsLoading(false));
   }
 
   function handleLogin(user) {
+    setIsLoading(true);
+
     authApi.login(user)
     .then((user) => {
       localStorage.removeItem('movies');
@@ -183,15 +182,14 @@ function App() {
 
       localStorage.setItem('movies', JSON.stringify(filteredMoviesList));
     })
-    .catch((err) => console.log(err))
+    .catch((err) => errorHandler(err, 'Не удалось выполнить поиск фильмов'))
     .finally(() => setIsLoading(false));
   }
 
   function handleMovieSave(movie) {
     moviesApi.saveMovie(movie)
     .then((movie) => setSavedMoviesList([ movie, ...savedMoviesList ]))
-    .catch((err) => console.log(err))
-    .finally(() =>console.log(savedMoviesList))
+    .catch((err) => errorHandler(err, 'Карточка с таким идентификатором уже добавлена в избранное'));
   }
 
   function handleMovieDelete(movieId) {
@@ -200,8 +198,7 @@ function App() {
         return savedMoviesList.filter((savedMovie) => savedMovie._id !== movieId);
       })
     )
-    .catch((err) => console.log(err))
-    .finally(() =>console.log(savedMoviesList))
+    .catch((err) => errorHandler(err, 'Не удалось удалить карточку'));
   }
 
   function handleMenuButtonClick() {
@@ -226,10 +223,16 @@ function App() {
                 <Footer />
               </Route>            
               <Route path="/signup">
-                <Register onRegister={ handleRegister } />
+                <Register
+                  onRegister={ handleRegister }
+                  isDataLoading={ isLoading }
+                />
               </Route>
               <Route path="/signin">
-                <Login onLogin={ handleLogin } />
+                <Login
+                  onLogin={ handleLogin }
+                  isDataLoading={ isLoading }
+                />
               </Route>
               <ProtectedRoute path="/movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
@@ -249,9 +252,7 @@ function App() {
               <ProtectedRoute path="/saved-movies" defaultPath="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } />
                 <SavedMovies
-                  isMoviesLoading={ isLoading }
                   savedMoviesList={ savedMoviesList }
-                  onMovieSave={ handleMovieSave }
                   onMovieDelete={ handleMovieDelete }
                 />
                 <Footer />

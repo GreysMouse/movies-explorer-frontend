@@ -27,7 +27,7 @@ function SearchForm(props) {
   function handleSubmit(evt) {
     evt.preventDefault();
     
-    if (isFormValid) {
+    if (isFormValid || props.page === 'saved-movies') {
       props.onMoviesSearch(searchQuery, isShortMovie);
     }
     else console.log('Нужно ввести ключевое слово');

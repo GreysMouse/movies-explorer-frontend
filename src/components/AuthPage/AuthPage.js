@@ -21,6 +21,7 @@ function AuthPage(props) {
           submitButtonText={ props.submitButtonText }
           onSubmit={ props.onSubmit }
           isFormValid={ props.isFormValid }
+          isDataLoading={ props.isLoading }
         >
           { props.children }
         </AuthForm>

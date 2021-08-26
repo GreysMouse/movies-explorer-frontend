@@ -13,7 +13,6 @@ function MoviesCardList(props) {
           props.isMoviesLoading ?
             <Preloader />
           :
-          //found
             props.uploadedMoviesList.length ? 
               props.uploadedMoviesList.map((uploadedMovie) => {
                 const savedMovie = props.savedMoviesList.find((savedMovie) => {
@@ -25,6 +24,7 @@ function MoviesCardList(props) {
                 return (
                   <MoviesCard
                     key={ movie.movieId }
+                    page="movies"
                     movie={ movie }
                     isSaved={ !!savedMovie }
                     onSave={ props.onMovieSave }
@@ -41,17 +41,34 @@ function MoviesCardList(props) {
           props.isMoviesLoading ?
             <Preloader />
           :
-            (props.isFiltered ? props.filteredMoviesList : props.savedMoviesList).map((movie) => {
-              return (
-                <MoviesCard
-                  key={ movie.movieId }
-                  movie={ movie }
-                  isSaved={ true }
-                  onDelete={ props.onMovieDelete }
-                />
-              );
-            })
-        )
+            props.isFiltered ?
+              props.filteredMoviesList.length ?
+                props.filteredMoviesList.map((movie) => {
+                  return (
+                    <MoviesCard
+                      key={ movie.movieId }
+                      page="saved-movies"
+                      movie={ movie }
+                      isSaved={ true }
+                      onDelete={ props.onMovieDelete }
+                    />
+                  );
+                })
+              :
+                <p className="movies-card-list__text">Ничего не найдено</p>
+            :
+              props.savedMoviesList.map((movie) => {
+                return (
+                  <MoviesCard
+                    key={ movie.movieId }
+                    page="saved-movies"
+                    movie={ movie }
+                    isSaved={ true }
+                    onDelete={ props.onMovieDelete }
+                  />
+                );
+              })
+          )
       }
     </section>
   );

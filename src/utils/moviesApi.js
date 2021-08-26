@@ -8,9 +8,7 @@ class MoviesApi {
 
   _checkResponse(res) {
     if (res.ok) return res.json();
-    return Promise.reject(`${
-      res.status === 500 ? 'Сервер не отвечает' : 'Ошибка с кодом ' + res.status + ': ' + res.statusText
-    }`);
+    return Promise.reject(res);
   }
   
   searchMovies() {

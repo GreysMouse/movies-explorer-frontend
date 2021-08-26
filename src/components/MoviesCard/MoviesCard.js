@@ -15,6 +15,11 @@ function MoviesCard(props) {
     props.isSaved ? props.onDelete(props.movie._id) : props.onSave(props.movie);
   }
 
+  let addButtonClass = '';
+
+  if (props.page === 'movies' && props.isSaved) addButtonClass = 'movie-card__add-button_state_added';
+  else if (props.page === 'saved-movies' && props.isSaved) addButtonClass= 'movie-card__add-button_state_saved';
+
   return (
     <div className="movie-card">
       <div className="movie-card__header">
@@ -34,7 +39,7 @@ function MoviesCard(props) {
         />
       </a>
       <button
-        className={ 'movie-card__add-button ' + (props.isSaved ? 'movie-card__add-button_state_added' : '') }
+        className={ 'movie-card__add-button ' + addButtonClass }
         onClick={ handleMovieSave }
       >
         { props.isSaved ? '' : 'Сохранить' }
