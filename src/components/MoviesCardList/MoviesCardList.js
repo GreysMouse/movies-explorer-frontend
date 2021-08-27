@@ -13,13 +13,13 @@ function MoviesCardList(props) {
           props.isMoviesLoading ?
             <Preloader />
           :
-            props.uploadedMoviesList.length ? 
-              props.uploadedMoviesList.map((uploadedMovie) => {
+            props.displayedMoviesList.length ? 
+              props.displayedMoviesList.map((displayedMovie) => {
                 const savedMovie = props.savedMoviesList.find((savedMovie) => {
-                  return savedMovie.movieId === uploadedMovie.movieId;
+                  return savedMovie.movieId === displayedMovie.movieId;
                 });
 
-                const movie = savedMovie || uploadedMovie;
+                const movie = savedMovie || displayedMovie;
 
                 return (
                   <MoviesCard

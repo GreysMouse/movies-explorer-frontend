@@ -19,7 +19,7 @@ class MoviesFilter {
         thumbnail: MOVIES_API_BASE_URL + movie.image.formats.thumbnail.url || '',
         movieId: movie.id || 1000000,
         nameRU: movie.nameRU || 'no nameRU',
-        nameEN: movie.nameEN || 'noNameEN',
+        nameEN: movie.nameEN || 'no NameEN',
         owner: movie.owner || '-1'
       };
     });  
@@ -27,26 +27,19 @@ class MoviesFilter {
 
   searchFilter(moviesList, searchQuery, isShort) {
     const keyWords = searchQuery.toLowerCase().split(' ').filter((key) => !!key);
-  
     const filteredMoviesList = [];
-  
-    let include;
-  
+    
     for (let movie of moviesList) {
       if (isShort && movie.duration > SHORT_MOVIE_DURATION_LIMIT) continue;
       
-      include = true;     
-  
-      for (let word of keyWords) {     
-        if (!(movie.nameRU || '').toLowerCase().split(' ').includes(word)) {
-          if (!(movie.nameEN || '').toLowerCase().split(' ').includes(word)) {
-            include = false;
-            break;
-          }
+      for (let word of keyWords) {
+        const regExp = new RegExp('(' + word + ')', 'i');
+
+        if ((movie.nameRU || '').search(regExp) !== -1 || (movie.nameEN || '').search(regExp) !== -1) {
+          filteredMoviesList.push(movie);
+          break;
         }
       }
-  
-      if (include) filteredMoviesList.push(movie);
     }
     
     return filteredMoviesList;

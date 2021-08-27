@@ -9,8 +9,8 @@ import {
   MOVIES_CARD_UPLOAD_COUNT_425PX
 } from '../config';
 
-class MoviesUploader {
-  getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth) {
+class MoviesCountHandler {
+  _getDisplayedCardsCount(currentWindowWidth) {
     let cardsCount = MOVIES_CARD_MIN_COUNT_DEFAULT;
 
     if (currentWindowWidth <= SCREEN_WIDTH_CHECKPOINT_425PX) {
@@ -20,13 +20,10 @@ class MoviesUploader {
       cardsCount = MOVIES_CARD_MIN_COUNT_768PX;
     }
 
-    if (uploadedMoviesList.length >= cardsCount ) return uploadedMoviesList; // Чтобы не уменьшать уже видимое число фильмов при уменьшении разрешения
-    return foundMoviesList.slice(0, cardsCount);
+    return cardsCount;
   }
 
-  uploadCards(foundMoviesList, uploadedMoviesList, currentWindowWidth) {
-    const pointer = uploadedMoviesList.length;
-    
+  _getUploadedCardsCount(currentWindowWidth) {
     let uploadsCount = MOVIES_CARD_UPLOAD_COUNT_DEFAULT;
 
     if (currentWindowWidth <= SCREEN_WIDTH_CHECKPOINT_425PX) {
@@ -36,6 +33,24 @@ class MoviesUploader {
       uploadsCount = MOVIES_CARD_UPLOAD_COUNT_768PX;
     }
 
+    return uploadsCount;
+  }
+  
+  getCards(foundMoviesList, uploadedMoviesList, currentWindowWidth) {
+    const cardsCount = this._getDisplayedCardsCount(currentWindowWidth);
+
+    // ----- Чтобы не уменьшать уже видимое число фильмов при уменьшении разрешения -----//
+    if (uploadedMoviesList.length >= cardsCount ) return uploadedMoviesList;
+    // --------------------------------------------------------------------------------- //
+
+    return foundMoviesList.slice(0, cardsCount);
+  }
+
+  uploadCards(foundMoviesList, uploadedMoviesList, currentWindowWidth) {
+    const pointer = uploadedMoviesList.length;
+    
+    let uploadsCount = this._getUploadedCardsCount(currentWindowWidth);
+
     if (pointer + uploadsCount > foundMoviesList.length) {
       uploadsCount = pointer + uploadsCount - foundMoviesList.length + 1;
     }
@@ -43,6 +58,6 @@ class MoviesUploader {
   }
 }
 
-const moviesUploader = new MoviesUploader();
+const moviesCountHandler = new MoviesCountHandler();
 
-export default moviesUploader;
+export default moviesCountHandler;

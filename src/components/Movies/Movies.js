@@ -13,11 +13,10 @@ function Movies(props) {
         disabled={ props.isMoviesLoading }
       />
       {
-        // founded
-        (props.uploadedMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
+        (props.displayedMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
           page="movies"
           foundMoviesList={ props.foundMoviesList }
-          uploadedMoviesList={ props.uploadedMoviesList }
+          displayedMoviesList={ props.displayedMoviesList }
           savedMoviesList={ props.savedMoviesList }
           isMoviesLoading={ props.isMoviesLoading }
           onMovieSave={ props.onMovieSave }
@@ -25,7 +24,7 @@ function Movies(props) {
         />
       }
       {
-        props.uploadedMoviesList.length !== props.foundMoviesList.length && <MoviesUploader
+        props.displayedMoviesList.length !== props.foundMoviesList.length && <MoviesUploader
           onButtonClick={ props.onUploaderClick }
         />
       }

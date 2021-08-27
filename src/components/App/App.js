@@ -3,7 +3,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 
 import windowWidthListener from '../../utils/windowWidthListener';
 import moviesFilter from '../../utils/moviesFilter';
-import moviesUploader from '../../utils/moviesUploader';
+import moviesCountHandler from '../../utils/moviesCountHandler';
 import errorHandler from '../../utils/errorHandler';
 
 import authApi from '../../utils/authApi';
@@ -62,8 +62,9 @@ function App() {
   const [ isInfoPopupOpen, setIsInfoPopupOpen ] = React.useState(false);
   const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
    
+  const [ initialMoviesList, setInitialMoviesList ] = React.useState([]);
   const [ foundMoviesList, setFoundMoviesList ] = React.useState([]);  
-  const [ uploadedMoviesList, setUploadedMoviesList ] = React.useState([]);
+  const [ displayedMoviesList, setDisplayedMoviesList ] = React.useState([]);
   const [ savedMoviesList,  setSavedMoviesList ] = React.useState([]);
 
   React.useEffect(() => {
@@ -73,9 +74,7 @@ function App() {
     .then((user) => handleAuthorization(user))
     .catch((err) => console.log(errorHandler(err, 'Необходима авторизация')));
 
-    moviesApi.getSavedMovies()
-    .then((movies) => setSavedMoviesList(movies))
-    .catch((err) => console.log(errorHandler(err, 'Необходима авторизация')));
+    handleSavedMoviesUpload();
 
     return () => {
       windowWidthListener.removeListener(handleWindowWidth);
@@ -85,8 +84,8 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    setUploadedMoviesList((uploadedMoviesList) => {
-      return moviesUploader.getUploadedCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
+    setDisplayedMoviesList((displayedMoviesList) => {
+      return moviesCountHandler.getCards(foundMoviesList, displayedMoviesList, currentWindowWidth);
     });
   }, [ foundMoviesList, currentWindowWidth ]);
 
@@ -109,6 +108,12 @@ function App() {
     setIsInfoPopupOpen(false);
   }
 
+  function handleSavedMoviesUpload() {
+    moviesApi.getSavedMovies()
+    .then((movies) => setSavedMoviesList(movies))
+    .catch((err) => console.log(errorHandler(err, 'Необходима авторизация')));
+  }
+
   function handleAuthorization({ email, name }) {
     console.log(`Выполнен вход в аккаунт ${ email }`);
 
@@ -119,9 +124,11 @@ function App() {
       return currentUser;
     });
 
-    setIsLoggedIn(true);
-    setFoundMoviesList(JSON.parse(localStorage.getItem('movies')) || []);
+    handleSavedMoviesUpload();
 
+    setIsLoggedIn(true);
+    setInitialMoviesList(JSON.parse(localStorage.getItem('movies')) || []);
+    
     history.push('/movies');
   }
 
@@ -224,25 +231,39 @@ function App() {
   }
 
   function handleMoviesSearch(searchQuery, isShort) {
-    setIsLoading(true);
-
-    moviesApi.searchMovies()
-    .then((moviesList) => {
-      const filteredMoviesList = moviesFilter.propertiesFilter(moviesFilter.searchFilter(moviesList, searchQuery, isShort));
-
-      setFoundMoviesList(filteredMoviesList);
-      setIsMoviesSearchButtonClicked(true);
-
-      localStorage.setItem('movies', JSON.stringify(filteredMoviesList));
-    })
-    .catch((err) => {
-      const errorMessage = errorHandler(err, 'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз');
+    if (!initialMoviesList.length) {
+      setIsLoading(true);
       
-      setIsInfoPopupOpen(true);
-      setInfoMessage(errorMessage);
-      console.log(errorMessage);
-    })
-    .finally(() => setIsLoading(false));
+      moviesApi.searchMovies()
+      .then((moviesList) => {
+        const formattedMoviesList = moviesFilter.propertiesFilter(moviesList);
+        const filteredMoviesList = moviesFilter.searchFilter(formattedMoviesList, searchQuery, isShort);
+
+        setInitialMoviesList(formattedMoviesList);
+        localStorage.setItem('movies', JSON.stringify(formattedMoviesList));
+
+        setDisplayedMoviesList([]);
+        setFoundMoviesList(moviesFilter.searchFilter(filteredMoviesList, searchQuery, isShort));
+
+        setIsMoviesSearchButtonClicked(true);
+      })
+      .catch((err) => {
+        const errorMessage = errorHandler(err, 'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз');
+        
+        setIsInfoPopupOpen(true);
+        setInfoMessage(errorMessage);
+        console.log(errorMessage);
+      })
+      .finally(() => setIsLoading(false));
+    }
+    else {
+      const filteredMoviesList = moviesFilter.searchFilter(initialMoviesList, searchQuery, isShort)
+
+      setDisplayedMoviesList([]);
+      setFoundMoviesList(filteredMoviesList);
+
+      setIsMoviesSearchButtonClicked(true);
+    }    
   }
 
   function handleMovieSave(movie) {
@@ -277,9 +298,9 @@ function App() {
   }
 
   function handleMoviesUploaderClick() {
-    const uploadedMovieCards = moviesUploader.uploadCards(foundMoviesList, uploadedMoviesList, currentWindowWidth);
+    const uploadedMovieCards = moviesCountHandler.uploadCards(foundMoviesList, displayedMoviesList, currentWindowWidth);
 
-    setUploadedMoviesList(uploadedMoviesList.concat(uploadedMovieCards));
+    setDisplayedMoviesList(displayedMoviesList.concat(uploadedMovieCards));
   }
 
   return (
@@ -290,7 +311,6 @@ function App() {
             <Switch>
               <Route exact path="/">
                 <Header location="main" onMenuOpen={ handleMenuButtonClick } /> 
-                {/*promo */ }
                 <Main />
                 <Footer />
               </Route>            
@@ -312,7 +332,7 @@ function App() {
                   isMoviesLoading={ isLoading }
                   isSearchButtonClicked={ isMoviesSearchButtonClicked }  
                   foundMoviesList={ foundMoviesList }
-                  uploadedMoviesList={ uploadedMoviesList }
+                  displayedMoviesList={ displayedMoviesList }
                   savedMoviesList={ savedMoviesList }
                   onMoviesSearch={ handleMoviesSearch }
                   onMovieSave={ handleMovieSave }
