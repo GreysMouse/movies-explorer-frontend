@@ -1,4 +1,4 @@
-import { MOVIES_API_BASE_URL } from '../config';
+import { MOVIES_API_BASE_URL, SHORT_MOVIE_DURATION_LIMIT } from '../config';
 
 class MoviesFilter {
   constructor(options) {
@@ -33,7 +33,7 @@ class MoviesFilter {
     let include;
   
     for (let movie of moviesList) {
-      if (isShort && movie.duration > 40) continue;
+      if (isShort && movie.duration > SHORT_MOVIE_DURATION_LIMIT) continue;
       
       include = true;     
   
