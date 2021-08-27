@@ -10,6 +10,10 @@
   background-color: #202020;
 }
 
+.menu__container:hover {
+  cursor: default;
+}
+
 @media screen and (max-width: 768px) {
   .menu__container {
     padding: 15px 30px;

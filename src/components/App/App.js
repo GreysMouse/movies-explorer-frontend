@@ -38,7 +38,6 @@ function App() {
   const [ isWindowWidthResizing, setIsWindowWidthResizing ] = React.useState(false);
   const [ isLoading, setIsLoading ] = React.useState(false);
   const [ infoMessage, setInfoMessage ] = React.useState('');
-  const [ isInfoPopupOpen, setIsInfoPopupOpen ] = React.useState(false);
 
   const [ currentUser, setCurrentUser ] = React.useState({
     name: 'Mouse Greys',
@@ -60,6 +59,7 @@ function App() {
   const [ isLoggedIn, setIsLoggedIn ] = React.useState(false);
 
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
+  const [ isInfoPopupOpen, setIsInfoPopupOpen ] = React.useState(false);
   const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
    
   const [ foundMoviesList, setFoundMoviesList ] = React.useState([]);  
@@ -272,8 +272,8 @@ function App() {
     });
   }
 
-  function handleMenuButtonClick() {
-    setIsMenuOpen(!isMenuOpen);
+  function handleMenuButtonClick(evt) {
+    if (evt.target.tagName === 'BUTTON' || evt.target.tagName === 'ASIDE') setIsMenuOpen(!isMenuOpen);
   }
 
   function handleMoviesUploaderClick() {
@@ -289,7 +289,8 @@ function App() {
           <div className="app__container">
             <Switch>
               <Route exact path="/">
-                <Header location="promo" />
+                <Header location="main" onMenuOpen={ handleMenuButtonClick } /> 
+                {/*promo */ }
                 <Main />
                 <Footer />
               </Route>            
