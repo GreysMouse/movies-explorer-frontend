@@ -12,6 +12,7 @@ import moviesApi from '../../utils/moviesApi';
 
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import IsLoggedInContext from '../../contexts/IsLoggedInContext';
+import IsDataLoadingContext from '../../contexts/IsDataLoadingContext';
 
 import currentUserAvatar from '../../images/current-user-avatar.jpg';
 
@@ -36,7 +37,7 @@ function App() {
 
   const [ currentWindowWidth, setCurrentWindowWidth ] = React.useState(window.innerWidth);
   const [ isWindowWidthResizing, setIsWindowWidthResizing ] = React.useState(false);
-  const [ isLoading, setIsLoading ] = React.useState(false);
+  const [ isDataLoading, setIsDataLoading ] = React.useState(false);
   const [ infoMessage, setInfoMessage ] = React.useState('');
 
   const [ currentUser, setCurrentUser ] = React.useState({
@@ -60,7 +61,7 @@ function App() {
 
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
   const [ isInfoPopupOpen, setIsInfoPopupOpen ] = React.useState(false);
-  const [ isMoviesSearchButtonClicked,  setIsMoviesSearchButtonClicked ] = React.useState(false);
+  const [ isMoviesSearchInitiated,  setIsMoviesSearchInitiated ] = React.useState(false);
    
   const [ initialMoviesList, setInitialMoviesList ] = React.useState([]);
   const [ foundMoviesList, setFoundMoviesList ] = React.useState([]);  
@@ -117,6 +118,11 @@ function App() {
   function handleAuthorization({ email, name }) {
     console.log(`Выполнен вход в аккаунт ${ email }`);
 
+    console.log(foundMoviesList);
+    console.log(displayedMoviesList);
+    console.log(savedMoviesList);
+
+
     setCurrentUser((currentUser) => {
       currentUser.name = name;
       currentUser.email = email;
@@ -128,12 +134,12 @@ function App() {
 
     setIsLoggedIn(true);
     setInitialMoviesList(JSON.parse(localStorage.getItem('movies')) || []);
-    
+
     history.push('/movies');
   }
 
   function handleRegister(user) {
-    setIsLoading(true);
+    setIsDataLoading(true);
     
     authApi.register(user)
     .then(() => {
@@ -152,11 +158,11 @@ function App() {
       setInfoMessage(errorMessage);
       console.log(errorMessage);
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => setIsDataLoading(false));
   }
 
   function handleLogin(user) {
-    setIsLoading(true);
+    setIsDataLoading(true);
 
     authApi.login(user)
     .then((user) => {
@@ -173,7 +179,7 @@ function App() {
       setInfoMessage(errorMessage);
       console.log(errorMessage);
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => setIsDataLoading(false));
   }
 
   function handleLogout() {
@@ -186,6 +192,13 @@ function App() {
       console.log(message);
 
       setIsLoggedIn(false);
+      setIsMoviesSearchInitiated(false);
+
+      setInitialMoviesList([]);
+      setFoundMoviesList([]);
+      setDisplayedMoviesList([]);
+      setSavedMoviesList([]);
+      
       localStorage.removeItem('movies');
       history.push('/');
     })
@@ -199,7 +212,7 @@ function App() {
   }
 
   function handleUserCredentialsUpdate(credentials) {
-    setIsLoading(true);
+    setIsDataLoading(true);
 
     userApi.updateUserCredentials(credentials)
     .then((user) => {
@@ -227,13 +240,16 @@ function App() {
       setInfoMessage(errorMessage);
       console.log(errorMessage);
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => setIsDataLoading(false));
   }
 
   function handleMoviesSearch(searchQuery, isShort) {
+    setIsMoviesSearchInitiated(true);
+
     if (!initialMoviesList.length) {
-      setIsLoading(true);
       
+      setIsDataLoading(true);
+      setTimeout(() => {
       moviesApi.searchMovies()
       .then((moviesList) => {
         const formattedMoviesList = moviesFilter.propertiesFilter(moviesList);
@@ -244,8 +260,6 @@ function App() {
 
         setDisplayedMoviesList([]);
         setFoundMoviesList(moviesFilter.searchFilter(filteredMoviesList, searchQuery, isShort));
-
-        setIsMoviesSearchButtonClicked(true);
       })
       .catch((err) => {
         const errorMessage = errorHandler(err, 'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз');
@@ -254,7 +268,8 @@ function App() {
         setInfoMessage(errorMessage);
         console.log(errorMessage);
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsDataLoading(false));
+    }, 3000)
     }
     else {
       const filteredMoviesList = moviesFilter.searchFilter(initialMoviesList, searchQuery, isShort)
@@ -262,7 +277,7 @@ function App() {
       setDisplayedMoviesList([]);
       setFoundMoviesList(filteredMoviesList);
 
-      setIsMoviesSearchButtonClicked(true);
+      setIsMoviesSearchInitiated(true);
     }    
   }
 
@@ -306,70 +321,64 @@ function App() {
   return (
     <CurrentUserContext.Provider value={ currentUser }>
       <IsLoggedInContext.Provider value={ isLoggedIn }>
-        <div className="app">
-          <div className="app__container">
-            <Switch>
-              <Route exact path="/">
-                <Header location="main" onMenuOpen={ handleMenuButtonClick } /> 
-                <Main />
-                <Footer />
-              </Route>            
-              <Route path="/signup">
-                <Register
-                  onRegister={ handleRegister }
-                  isDataLoading={ isLoading }
-                />
-              </Route>
-              <Route path="/signin">
-                <Login
-                  onLogin={ handleLogin }
-                  isDataLoading={ isLoading }
-                />
-              </Route>
-              <ProtectedRoute path="/movies" defaultPath="/">
-                <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <Movies
-                  isMoviesLoading={ isLoading }
-                  isSearchButtonClicked={ isMoviesSearchButtonClicked }  
-                  foundMoviesList={ foundMoviesList }
-                  displayedMoviesList={ displayedMoviesList }
-                  savedMoviesList={ savedMoviesList }
-                  onMoviesSearch={ handleMoviesSearch }
-                  onMovieSave={ handleMovieSave }
-                  onMovieDelete={ handleMovieDelete }
-                  onUploaderClick={ handleMoviesUploaderClick }            
-                />
-                <Footer />
-              </ProtectedRoute>
-              <ProtectedRoute path="/saved-movies" defaultPath="/">
-                <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <SavedMovies
-                  savedMoviesList={ savedMoviesList }
-                  onMovieDelete={ handleMovieDelete }
-                />
-                <Footer />
-              </ProtectedRoute>
-              <ProtectedRoute path="/profile" defaultPath="/">
-                <Header location="main" onMenuOpen={ handleMenuButtonClick } />
-                <Profile
-                  isDataLoading={ isLoading }
-                  onUserUpdate={ handleUserCredentialsUpdate }
-                  onLogout={ handleLogout }
-                  logoutLink="/signin"
-                />
-              </ProtectedRoute>
-              <Route path="*">
-                <NotFoundPage />
-              </Route>
-            </Switch>
-            <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
-            <ErrorInfoPopup
-              isOpen={ isInfoPopupOpen }
-              message={ infoMessage }
-              onClick={ handleInfoPopupClick }
-            />
+        <IsDataLoadingContext.Provider value={ isDataLoading }>
+          <div className="app">
+            <div className="app__container">
+              <Switch>
+                <Route exact path="/">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } /> 
+                  <Main />
+                  <Footer />
+                </Route>            
+                <Route path="/signup">
+                  <Register onRegister={ handleRegister } />
+                </Route>
+                <Route path="/signin">
+                  <Login onLogin={ handleLogin } />
+                </Route>
+                <ProtectedRoute path="/movies" defaultPath="/">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                  <Movies
+                    isSearchButtonClicked={ isMoviesSearchInitiated }  
+                    foundMoviesList={ foundMoviesList }
+                    displayedMoviesList={ displayedMoviesList }
+                    savedMoviesList={ savedMoviesList }
+                    onMoviesSearch={ handleMoviesSearch }
+                    onMovieSave={ handleMovieSave }
+                    onMovieDelete={ handleMovieDelete }
+                    onUploaderClick={ handleMoviesUploaderClick }            
+                  />
+                  <Footer />
+                </ProtectedRoute>
+                <ProtectedRoute path="/saved-movies" defaultPath="/">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                  <SavedMovies
+                    savedMoviesList={ savedMoviesList }
+                    onMovieDelete={ handleMovieDelete }
+                  />
+                  <Footer />
+                </ProtectedRoute>
+                <ProtectedRoute path="/profile" defaultPath="/">
+                  <Header location="main" onMenuOpen={ handleMenuButtonClick } />
+                  <Profile
+                    onUserUpdate={ handleUserCredentialsUpdate }
+                    onLogout={ handleLogout }
+                    logoutLink="/signin"
+                  />
+                </ProtectedRoute>
+                <Route path="*">
+                  <NotFoundPage />
+                </Route>
+              </Switch>
+              <Menu isOpen={ isMenuOpen } onMenuOpen={ handleMenuButtonClick } />
+              <ErrorInfoPopup
+                isOpen={ isInfoPopupOpen }
+                message={ infoMessage }
+                onClick={ handleInfoPopupClick }
+              />
+            </div>
           </div>
-        </div>
+        </IsDataLoadingContext.Provider>
       </IsLoggedInContext.Provider>
     </CurrentUserContext.Provider>
   );

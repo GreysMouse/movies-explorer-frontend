@@ -75,7 +75,6 @@ function Register(props) {
       submitButtonText="Зарегистрироваться"
       onSubmit={ handleSubmit }
       isFormValid={ isFormValid }
-      isDataLoading={ props.isLoading }
       redirectText="Уже зарегистрированы?"
       redirectLink="/signin"
       redirectLinkText="Войти"

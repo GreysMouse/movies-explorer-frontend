@@ -1,5 +1,7 @@
 import React from 'react';
 
+import IsDataLoadingContext from '../../contexts/IsDataLoadingContext';
+
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 import './search-form.css';
@@ -8,6 +10,8 @@ import './search-form__submit-button.css';
 import './search-form__filter-checkbox.css';
 
 function SearchForm(props) {
+  const isDataloading = React.useContext(IsDataLoadingContext);
+
   const [ searchQuery, setSearchQuery ] = React.useState('');
   const [ isFormValid, setIsFormValid ] = React.useState(false);
 
@@ -48,7 +52,7 @@ function SearchForm(props) {
       <button
         className="search-form__submit-button"
         onClick={ handleSubmit }
-        disabled={ props.disabled }
+        disabled={ isDataloading }
       >
         Найти
       </button>

@@ -56,7 +56,6 @@ function Login(props) {
       submitButtonText="Войти"
       onSubmit={ handleSubmit }
       isFormValid={ isFormValid }
-      isDataLoading={ props.isLoading }
       redirectText="Ещё не зарегистрированы?"
       redirectLink="/signup"
       redirectLinkText="Регистрация"

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesUploader from '../MoviesUploader/MoviesUploader';
@@ -10,7 +12,6 @@ function Movies(props) {
       <SearchForm
         page="movies"
         onMoviesSearch={ props.onMoviesSearch }
-        disabled={ props.isMoviesLoading }
       />
       {
         (props.displayedMoviesList.length || props.isSearchButtonClicked) && <MoviesCardList
@@ -18,7 +19,6 @@ function Movies(props) {
           foundMoviesList={ props.foundMoviesList }
           displayedMoviesList={ props.displayedMoviesList }
           savedMoviesList={ props.savedMoviesList }
-          isMoviesLoading={ props.isMoviesLoading }
           onMovieSave={ props.onMovieSave }
           onMovieDelete={ props.onMovieDelete }
         />

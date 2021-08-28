@@ -10,16 +10,16 @@ import './saved-movies__movies-card-list.css';
 
 function SavedMovies(props) {
   const [ filteredMoviesList, setFilteredMoviesList ] = React.useState([]);
-  const [ isFiltered, setIsFiltered ] = React.useState(false);
+  const [ inSearch, setInSearch ] = React.useState(false);
 
   function handleSavedMoviesSearch(searchQuery, isShort) {
     if (searchQuery) {
       const filteredMovies = moviesFilter.searchFilter(props.savedMoviesList, searchQuery, isShort);
 
       setFilteredMoviesList(filteredMovies);
-      setIsFiltered(true);
+      setInSearch(true);
     }
-    else setIsFiltered(false);
+    else setInSearch(false);
   }
 
   return (
@@ -34,7 +34,7 @@ function SavedMovies(props) {
           page="saved-movies"
           savedMoviesList={ props.savedMoviesList }
           filteredMoviesList={ filteredMoviesList }
-          isFiltered={ isFiltered }
+          inSearch={ inSearch }
           onMovieDelete={ props.onMovieDelete }
         />
       }
