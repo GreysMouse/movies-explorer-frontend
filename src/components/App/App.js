@@ -1,7 +1,9 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
-import windowWidthListener from '../../utils/windowWidthListener';
+import { VIEWPORT_WIDTH_RESIZING_TIMEOUT } from '../../config';
+
+import viewportWidthListener from '../../utils/viewportWidthListener';
 import moviesFilter from '../../utils/moviesFilter';
 import moviesCountHandler from '../../utils/moviesCountHandler';
 import errorHandler from '../../utils/errorHandler';
@@ -35,8 +37,8 @@ import './app__container.css';
 function App() {
   const history = useHistory();
 
-  const [ currentWindowWidth, setCurrentWindowWidth ] = React.useState(window.innerWidth);
-  const [ isWindowWidthResizing, setIsWindowWidthResizing ] = React.useState(false);
+  const [ currentViewportWidth, setCurrentViewportWidth ] = React.useState(window.innerWidth);
+  const [ isViewportWidthResizing, setIsViewportWidthResizing ] = React.useState(false);
   const [ isDataLoading, setIsDataLoading ] = React.useState(false);
   const [ infoMessage, setInfoMessage ] = React.useState('');
 
@@ -69,7 +71,7 @@ function App() {
   const [ savedMoviesList,  setSavedMoviesList ] = React.useState([]);
 
   React.useEffect(() => {
-    windowWidthListener.setListener(handleWindowWidth);
+    viewportWidthListener.setListener(handleViewportWidth);
 
     userApi.getUserCredentials()
     .then((user) => handleAuthorization(user))
@@ -78,7 +80,7 @@ function App() {
     handleSavedMoviesUpload();
 
     return () => {
-      windowWidthListener.removeListener(handleWindowWidth);
+      viewportWidthListener.removeListener(handleViewportWidth);
     }
 
     // eslint-disable-next-line
@@ -86,22 +88,22 @@ function App() {
 
   React.useEffect(() => {
     setDisplayedMoviesList((displayedMoviesList) => {
-      return moviesCountHandler.getCards(foundMoviesList, displayedMoviesList, currentWindowWidth);
+      return moviesCountHandler.getCards(foundMoviesList, displayedMoviesList, currentViewportWidth);
     });
-  }, [ foundMoviesList, currentWindowWidth ]);
+  }, [ foundMoviesList, currentViewportWidth ]);
 
   React.useEffect(() => {
     if (isInfoPopupOpen) setTimeout(() => setIsInfoPopupOpen(false), 5000);
   }, [ isInfoPopupOpen ]);
 
-  function handleWindowWidth(evt) {
-    if (!isWindowWidthResizing) {
-      setIsWindowWidthResizing(true);
+  function handleViewportWidth(evt) {
+    if (!isViewportWidthResizing) {
+      setIsViewportWidthResizing(true);
 
       setTimeout(() => {
-        setCurrentWindowWidth(evt.target.innerWidth);
-        setIsWindowWidthResizing(false);
-      }, 1000);
+        setCurrentViewportWidth(evt.target.innerWidth);
+        setIsViewportWidthResizing(false);
+      }, VIEWPORT_WIDTH_RESIZING_TIMEOUT);
     }
   }
 
@@ -117,11 +119,6 @@ function App() {
 
   function handleAuthorization({ email, name }) {
     console.log(`Выполнен вход в аккаунт ${ email }`);
-
-    console.log(foundMoviesList);
-    console.log(displayedMoviesList);
-    console.log(savedMoviesList);
-
 
     setCurrentUser((currentUser) => {
       currentUser.name = name;
@@ -246,10 +243,9 @@ function App() {
   function handleMoviesSearch(searchQuery, isShort) {
     setIsMoviesSearchInitiated(true);
 
-    if (!initialMoviesList.length) {
-      
+    if (!initialMoviesList.length) {    
       setIsDataLoading(true);
-      setTimeout(() => {
+
       moviesApi.searchMovies()
       .then((moviesList) => {
         const formattedMoviesList = moviesFilter.propertiesFilter(moviesList);
@@ -269,7 +265,6 @@ function App() {
         console.log(errorMessage);
       })
       .finally(() => setIsDataLoading(false));
-    }, 3000)
     }
     else {
       const filteredMoviesList = moviesFilter.searchFilter(initialMoviesList, searchQuery, isShort)
@@ -313,7 +308,7 @@ function App() {
   }
 
   function handleMoviesUploaderClick() {
-    const uploadedMovieCards = moviesCountHandler.uploadCards(foundMoviesList, displayedMoviesList, currentWindowWidth);
+    const uploadedMovieCards = moviesCountHandler.uploadCards(foundMoviesList, displayedMoviesList, currentViewportWidth);
 
     setDisplayedMoviesList(displayedMoviesList.concat(uploadedMovieCards));
   }
