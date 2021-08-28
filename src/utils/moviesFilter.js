@@ -25,19 +25,43 @@ class MoviesFilter {
     });  
   };
 
+  _isWordFound(str, word) {
+    let str_pointer = 0;
+    let word_pointer = 0;
+
+    while(str_pointer < str.length) {
+      if (str[str_pointer] === word[word_pointer]) {
+        if (word_pointer === word.length - 1) return true;
+        word_pointer++;
+      }
+      else if (word_pointer !== 0) {
+        word_pointer = 0;
+        continue;
+      }
+      str_pointer++;
+    }
+    return false;
+  }
+
   searchFilter(moviesList, searchQuery, isShort) {
     const keyWords = searchQuery.toLowerCase().split(' ').filter((key) => !!key);
     const filteredMoviesList = [];
+
+    let nameRU = '';
+    let nameEN = '';
     
     for (let movie of moviesList) {
       if (isShort && movie.duration > SHORT_MOVIE_DURATION_LIMIT) continue;
       
-      for (let word of keyWords) {
-        const regExp = new RegExp('(' + word + ')', 'i');
+      nameRU = movie.nameRU.toLowerCase();
+      nameEN = movie.nameEN.toLowerCase();
 
-        if ((movie.nameRU || '').search(regExp) !== -1 || (movie.nameEN || '').search(regExp) !== -1) {
-          filteredMoviesList.push(movie);
-          break;
+      for (let word of keyWords) {
+        word = word.toLowerCase();
+
+        if (this._isWordFound(nameRU, word) || this._isWordFound(nameEN, word)) {
+            filteredMoviesList.push(movie);
+            break;
         }
       }
     }
