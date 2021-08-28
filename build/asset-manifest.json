@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "./static/css/main.8ab7fb73.chunk.css",
+    "main.js": "./static/js/main.512bf9db.chunk.js",
+    "main.js.map": "./static/js/main.512bf9db.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.0d0b9e38.js",
+    "runtime-main.js.map": "./static/js/runtime-main.0d0b9e38.js.map",
+    "static/js/2.c0c56524.chunk.js": "./static/js/2.c0c56524.chunk.js",
+    "static/js/2.c0c56524.chunk.js.map": "./static/js/2.c0c56524.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/main.8ab7fb73.chunk.css.map": "./static/css/main.8ab7fb73.chunk.css.map",
+    "static/js/2.c0c56524.chunk.js.LICENSE.txt": "./static/js/2.c0c56524.chunk.js.LICENSE.txt",
+    "static/media/index.css": "./static/media/Inter-Regular.e148c4a1.woff",
+    "static/media/current-user-avatar.0f46e148.jpg": "./static/media/current-user-avatar.0f46e148.jpg",
+    "static/media/default-student-avatar.c2cd1605.svg": "./static/media/default-student-avatar.c2cd1605.svg",
+    "static/media/menu-button_location_main.css": "./static/media/menu-button-location-main.b71b3a96.svg",
+    "static/media/menu-button_location_menu.css": "./static/media/menu-button-location-menu.3350c4cc.svg",
+    "static/media/movie-card__add-button_state_added.css": "./static/media/movie-add-button-icon-added.7e65bb76.svg",
+    "static/media/movie-card__add-button_state_saved.css": "./static/media/movie-add-button-icon-saved.2c73d5a4.svg",
+    "static/media/website-logo.34db3350.svg": "./static/media/website-logo.34db3350.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0d0b9e38.js",
+    "static/js/2.c0c56524.chunk.js",
+    "static/css/main.8ab7fb73.chunk.css",
+    "static/js/main.512bf9db.chunk.js"
+  ]
+}

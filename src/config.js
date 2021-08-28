@@ -1,7 +1,7 @@
 const VIEWPORT_WIDTH_RESIZING_TIMEOUT = 1000;
 const INFO_POPUP_TIMEOUT = 8000;
 
-const MAIN_API_BASE_URL = 'http://localhost:4000'; //'https://api.beatfilms.greysmouse.nomoredomains.monster';
+const MAIN_API_BASE_URL = 'https://api.beatfilms.greysmouse.nomoredomains.monster';
 const MOVIES_API_BASE_URL = 'https://api.nomoreparties.co';
 
 const USER_NAME_REGEXP = /^[A-Za-zА-Яа-я -]*$/;
