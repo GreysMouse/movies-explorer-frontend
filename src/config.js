@@ -1,4 +1,5 @@
 const VIEWPORT_WIDTH_RESIZING_TIMEOUT = 1000;
+const INFO_POPUP_TIMEOUT = 8000;
 
 const MAIN_API_BASE_URL = 'http://localhost:4000'; //'https://api.beatfilms.greysmouse.nomoredomains.monster';
 const MOVIES_API_BASE_URL = 'https://api.nomoreparties.co';
@@ -20,6 +21,7 @@ const MOVIES_CARD_UPLOAD_COUNT_425PX = 2;
 
 export {
   VIEWPORT_WIDTH_RESIZING_TIMEOUT,
+  INFO_POPUP_TIMEOUT,
   MAIN_API_BASE_URL,
   MOVIES_API_BASE_URL,
   USER_NAME_REGEXP,
