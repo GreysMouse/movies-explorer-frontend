@@ -12,6 +12,10 @@ function SavedMovies(props) {
   const [ filteredMoviesList, setFilteredMoviesList ] = React.useState([]);
   const [ inSearch, setInSearch ] = React.useState(false);
 
+  function handleFilteredMovieDelete(filteredMoviesList, deletedMovieId) {
+    setFilteredMoviesList(filteredMoviesList.filter((movie) => movie._id !== deletedMovieId));
+  }
+   
   function handleSavedMoviesSearch(searchQuery, isShort) {
     if (searchQuery) {
       const filteredMovies = moviesFilter.searchFilter(props.savedMoviesList, searchQuery, isShort);
@@ -36,6 +40,7 @@ function SavedMovies(props) {
           filteredMoviesList={ filteredMoviesList }
           inSearch={ inSearch }
           onMovieDelete={ props.onMovieDelete }
+          onFilteredMovieDelete={ handleFilteredMovieDelete }
         />
       }
     </main>

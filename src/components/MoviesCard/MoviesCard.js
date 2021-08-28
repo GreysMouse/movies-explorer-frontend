@@ -11,14 +11,18 @@ import './movie-card__add-button_state_added.css';
 import './movie-card__add-button_state_saved.css';
 
 function MoviesCard(props) {
-  function handleMovieSave() {
-    props.isSaved ? props.onDelete(props.movie._id) : props.onSave(props.movie);
-  }
-
   let addButtonClass = '';
 
   if (props.page === 'movies' && props.isSaved) addButtonClass = 'movie-card__add-button_state_added';
   else if (props.page === 'saved-movies' && props.isSaved) addButtonClass= 'movie-card__add-button_state_saved';
+
+  function handleMovieSave() {
+    if (props.isSaved) {
+      props.onDelete(props.movie._id);
+      props.onFilteredMovieDelete(props.movie._id);
+    }
+    else props.onSave(props.movie);
+  }
 
   return (
     <div className="movie-card">

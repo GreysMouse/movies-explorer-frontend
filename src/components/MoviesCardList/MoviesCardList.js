@@ -11,6 +11,10 @@ import './movies-card-list__text.css';
 function MoviesCardList(props) {
   const isDataloading = React.useContext(IsDataLoadingContext);
 
+  function handleFilteredMovieDelete(deletedMovieId) {
+    props.inSearch && props.onFilteredMovieDelete(props.filteredMoviesList, deletedMovieId);
+  }
+
   return (
     <section className={ 'movies-card-list ' + (props.addClasses || '') }>
       {
@@ -34,6 +38,7 @@ function MoviesCardList(props) {
                   isSaved={ !!savedMovie }
                   onSave={ props.onMovieSave }
                   onDelete={ props.onMovieDelete }
+                  onFilteredMovieDelete={ handleFilteredMovieDelete }
                 />
               );
             })
@@ -52,7 +57,8 @@ function MoviesCardList(props) {
                     page="saved-movies"
                     movie={ movie }
                     isSaved={ true }
-                    onDelete={ props.onMovieDelete }
+                    onDelete={ props.onMovieDelete }                    
+                    onFilteredMovieDelete={ handleFilteredMovieDelete }
                   />
                 );
               })
@@ -67,6 +73,7 @@ function MoviesCardList(props) {
                   movie={ movie }
                   isSaved={ true }
                   onDelete={ props.onMovieDelete }
+                  onFilteredMovieDelete={ handleFilteredMovieDelete }
                 />
               );
             })
