@@ -1,6 +1,7 @@
-.auth-form__input-span {
+.profile-form__input-span {
   visibility: hidden;
-  margin: 6px 0 0;
+  align-self: flex-end;
+  margin: 12px 0 0;
   min-height: 14px;
   font-size: 12px;
   font-weight: 400;
@@ -9,7 +10,7 @@
 }
 
 @media screen and (max-width: 425px) {
-  .auth-form__input-span {
+  .profile-form__input-span {
     min-height: 12px;
     font-size: 10px;
   }

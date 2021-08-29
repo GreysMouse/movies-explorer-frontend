@@ -1,6 +1,6 @@
 import React from 'react';
 
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 import defaultStudentAvatar from '../../images/default-student-avatar.svg';
 
 import './student-card.css';
@@ -13,7 +13,7 @@ import './student-card__link.css';
 import './student-card__avatar.css';
 
 function StudentCard(props) {
-  const currentUser = React.useContext(currentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
     <article className={ 'student-card ' + (props.addClasses || '') }>

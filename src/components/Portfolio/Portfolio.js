@@ -1,6 +1,6 @@
 import React from 'react';
 
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 import './portfolio.css';
 import './portfolio__title.css';
@@ -9,7 +9,7 @@ import './portfolio__link.css';
 import './portfolio__link-text.css';
 
 function Portfolio(props) {
-  const currentUser = React.useContext(currentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
     currentUser.portfolio.length !== 0 &&

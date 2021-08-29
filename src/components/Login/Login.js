@@ -1,4 +1,5 @@
 import React from 'react';
+import Validator from 'validator';
 
 import AuthPage from "../AuthPage/AuthPage";
 import AuthFormInput from "../AuthFormInput/AuthFormInput";
@@ -10,18 +11,24 @@ function Login(props) {
   const [ isValidUserEmail, setIsValidUserEmail ] = React.useState(false);
   const [ isValidUserPassword, setIsValidUserPassword ] = React.useState(false);
 
-  const [ isFormValid, setIsFormValid ] = React.useState(true);
+  const [ userEmailSpanText, setUserEmailSpanText ] = React.useState('');
+  const [ userPasswordSpanText, setUserPasswordSpanText ] = React.useState('');
+
+  const [ isFormValid, setIsFormValid ] = React.useState(false);
 
   React.useEffect(() => {
-    if (!userEmail || !userPassword) setIsFormValid(false);
+    if (!isValidUserEmail || !isValidUserPassword) setIsFormValid(false);
     else setIsFormValid(true);
-  }, [ userEmail, userPassword ]);
+  }, [ isValidUserEmail, isValidUserPassword ]);
 
   function handleUserEmailInput(evt) {
-    const { value, validity: { valid } } = evt.target;
+    const { value } = evt.target;
 
     setUserEmail(value);
-    setIsValidUserEmail(valid);   
+    setIsValidUserEmail(Validator.isEmail(value));
+
+    if (!value) setUserEmailSpanText('Поле не заполнено');
+    else setUserEmailSpanText('Некорректный формат E-mail');
   }
 
   function handleUserPasswordInput(evt) {
@@ -29,13 +36,18 @@ function Login(props) {
 
     setUserPassword(value);
     setIsValidUserPassword(valid);
+
+    if (!value) setUserPasswordSpanText('Поле не заполнено');
+    else setUserPasswordSpanText('Длина пароля должна быть не менее 8 символов');
   }
 
   function handleSubmit(evt) {
     evt.preventDefault();
-
-    if (!isValidUserEmail || !isValidUserPassword) alert('!');
-    else props.onLogin();
+    
+    props.onLogin({
+      email: userEmail,
+      password: userPassword
+    });
   }
 
   return (
@@ -54,8 +66,8 @@ function Login(props) {
         type="email"
         value={ userEmail }
         onChange={ handleUserEmailInput }
-        spanText=""
-        isSpanVisible={ false }
+        spanText={ userEmailSpanText }
+        isSpanVisible={ !isValidUserEmail }
       />
       <AuthFormInput
         minLength="8"
@@ -64,8 +76,8 @@ function Login(props) {
         type="password"
         value={ userPassword }
         onChange={ handleUserPasswordInput }
-        spanText=""
-        isSpanVisible={ false }
+        spanText={ userPasswordSpanText }
+        isSpanVisible={ !isValidUserPassword }
       />
     </AuthPage>
   );

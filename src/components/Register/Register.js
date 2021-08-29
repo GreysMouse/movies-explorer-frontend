@@ -1,4 +1,7 @@
 import React from 'react';
+import Validator from 'validator';
+
+import { USER_NAME_REGEXP } from '../../config';
 
 import AuthPage from "../AuthPage/AuthPage";
 import AuthFormInput from "../AuthFormInput/AuthFormInput";
@@ -12,15 +15,11 @@ function Register(props) {
   const [ isValidUserEmail, setIsValidUserEmail ] = React.useState(false);
   const [ isValidUserPassword, setIsValidUserPassword ] = React.useState(false);
 
-  const [ userNameSpanText, setUserNameSpanText ] = React.useState('Поле не заполнено');
-  const [ userEmailSpanText, setUserEmailSpanText ] = React.useState('Поле не заполнено');
-  const [ userPasswordSpanText, setUserPasswordSpanText ] = React.useState('Поле не заполнено');
+  const [ userNameSpanText, setUserNameSpanText ] = React.useState('');
+  const [ userEmailSpanText, setUserEmailSpanText ] = React.useState('');
+  const [ userPasswordSpanText, setUserPasswordSpanText ] = React.useState('');
 
-  const [ isUserNameSpanVisible, setIsUserNameSpanVisible ] = React.useState(false);
-  const [ isUserEmailSpanVisible, setIsUserEmailSpanVisible ] = React.useState(false);
-  const [ isUserPasswordSpanVisible, setIsUserPasswordSpanVisible ] = React.useState(false);
-
-  const [ isFormValid, setIsFormValid ] = React.useState(true);
+  const [ isFormValid, setIsFormValid ] = React.useState(false);
 
   React.useEffect(() => {
     if (!isValidUserName || !isValidUserEmail || !isValidUserPassword) setIsFormValid(false);
@@ -31,54 +30,43 @@ function Register(props) {
     const { value, validity: { valid } } = evt.target;
 
     setUserName(value);
+    setIsValidUserName(Validator.matches(value, USER_NAME_REGEXP) && valid);
 
-    if (!value) setUserNameSpanText('Поле не заполнено');
-    else setUserNameSpanText('Длина имени должна быть от 2 до 30 символов');
-    
-    setIsValidUserName(valid);
+    if (!Validator.matches(value, USER_NAME_REGEXP)) {
+      setUserNameSpanText('Допустимы только символы: А-Я(A-Z), а-я(a-z), тире или пробел');
+    }
+    else if (!value) setUserNameSpanText('Поле не заполнено');
+    else if (!valid) setUserNameSpanText('Длина имени должна быть от 2 до 30 символов');
   }
 
   function handleUserEmailInput(evt) {
-    const { value, validity: { valid } } = evt.target;
+    const { value } = evt.target;
 
     setUserEmail(value);
+    setIsValidUserEmail(Validator.isEmail(value));
 
     if (!value) setUserEmailSpanText('Поле не заполнено');
     else setUserEmailSpanText('Некорректный формат E-mail');
-
-    setIsValidUserEmail(valid);
   }
 
   function handleUserPasswordInput(evt) {
     const { value, validity: { valid } } = evt.target;
 
     setUserPassword(value);
+    setIsValidUserPassword(valid);
 
     if (!value) setUserPasswordSpanText('Поле не заполнено');
     else setUserPasswordSpanText('Длина пароля должна быть не менее 8 символов');
-
-    setIsValidUserPassword(valid);
-  }
-
-  function handleUserNameInputBlur() {
-    if (isValidUserName) setIsUserNameSpanVisible(false);
-    else setIsUserNameSpanVisible(true);
-  }
-
-  function handleUserEmailInputBlur() {
-    if (isValidUserEmail) setIsUserEmailSpanVisible(false);
-    else setIsUserEmailSpanVisible(true);
-  }
-
-  function handleUserPasswordInputBlur() {
-    if (isValidUserPassword) setIsUserPasswordSpanVisible(false);
-    else setIsUserPasswordSpanVisible(true);
   }
 
   function handleSubmit(evt) {
     evt.preventDefault();
 
-    props.onRegister();
+    props.onRegister({
+      email: userEmail,
+      password: userPassword,
+      name: userName
+    });
   }
 
   return (
@@ -99,9 +87,8 @@ function Register(props) {
         type="text"
         value={ userName }
         onChange={ handleUserNameInput }
-        onBlur={ handleUserNameInputBlur }
         spanText={ userNameSpanText }
-        isSpanVisible={ isUserNameSpanVisible }
+        isSpanVisible={ !isValidUserName }
       />
       <AuthFormInput
         placeholder="Укажите адрес электронной почты"
@@ -109,9 +96,8 @@ function Register(props) {
         type="email"
         value={ userEmail }
         onChange={ handleUserEmailInput }
-        onBlur={ handleUserEmailInputBlur }
         spanText={ userEmailSpanText }
-        isSpanVisible={ isUserEmailSpanVisible }
+        isSpanVisible={ !isValidUserEmail }
       />
       <AuthFormInput
         minLength="8"
@@ -120,9 +106,8 @@ function Register(props) {
         type="password"
         value={ userPassword }
         onChange={ handleUserPasswordInput }
-        onBlur={ handleUserPasswordInputBlur }
         spanText={ userPasswordSpanText }
-        isSpanVisible={ isUserPasswordSpanVisible }
+        isSpanVisible={ !isValidUserPassword }
       />
     </AuthPage>
   );

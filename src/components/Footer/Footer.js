@@ -1,5 +1,5 @@
 import React from 'react';
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 import './footer.css';
 import './footer__description.css';
@@ -9,7 +9,7 @@ import './footer__link-list.css';
 import './footer__link.css';
 
 function Footer() {
-  const currentUser = React.useContext(currentUserContext);  
+  const currentUser = React.useContext(CurrentUserContext);  
   const currentYear = new Date().getFullYear();
   
   return (

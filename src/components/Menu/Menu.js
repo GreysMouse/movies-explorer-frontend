@@ -7,8 +7,8 @@ import './menu_open.css';
 
 function Menu(props) {
   return (
-    <aside className={ 'menu ' + (props.isOpen ? 'menu_open' : '') }>
-      <div className="menu__container">
+    <aside className={ 'menu ' + (props.isOpen ? 'menu_open' : '') } onClick={ props.onMenuOpen }>
+      <div className="menu__container" >
         <MenuButton location="menu" onMenuOpen={ props.onMenuOpen } />
         <Navigation location="menu" />
       </div>

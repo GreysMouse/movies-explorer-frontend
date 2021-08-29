@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import currentUserContext from '../../contexts/currentUserContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import IsLoggedInContext from '../../contexts/IsLoggedInContext';
 import defaultStudentAvatar from '../../images/default-student-avatar.svg';
 
 import './navigation.css';
@@ -16,12 +17,19 @@ import './navigation__link_type_profile.css';
 import './navigation__profile-avatar.css';
 
 function Navigation(props) {
-  const currentUser = React.useContext(currentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
+  const isLoggedIn = React.useContext(IsLoggedInContext);
 
   return (
-    <nav className={ 'navigation ' + (props.location ? `navigation_location_${props.location}` : '') }>
-      { props.location === 'promo' &&
-        (
+    <nav className={ 'navigation ' + (
+      isLoggedIn ?
+        (props.location ? `navigation_location_${ props.location }` : '')
+      :
+        'navigation_location_promo'
+      )
+    }>
+      { 
+        !isLoggedIn &&
           <>
             <NavLink
               className="navigation__link navigation__link_type_registry"
@@ -36,10 +44,9 @@ function Navigation(props) {
               Войти
             </NavLink>
           </>
-        )
       }
-      { props.location === 'main' &&
-        (
+      {
+        isLoggedIn && props.location === 'main' &&
           <>
             <NavLink
               className="navigation__link"
@@ -68,10 +75,9 @@ function Navigation(props) {
               />
             </NavLink>
           </>
-        )
       }
-      { props.location === 'menu' &&
-        (
+      {
+        isLoggedIn && props.location === 'menu' &&
           <>
             <NavLink
               exact
@@ -107,7 +113,6 @@ function Navigation(props) {
                 alt="Аватар студента" />
             </NavLink>
           </>
-        )
       }
     </nav>
   );

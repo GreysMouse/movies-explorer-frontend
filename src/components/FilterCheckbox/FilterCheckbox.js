@@ -6,19 +6,13 @@ import './filter-checkbox__label.css';
 import './filter-checkbox__label_checked.css';
 
 function FilterCheckbox(props) {
-  const [ isChecked, setIsChecked ] = React.useState(false);
-
-  function handleFilterCheckboxCheck() {
-    setIsChecked(!isChecked);
-  }
-
   return (
     <div className={ 'filter-checkbox ' + (props.addClasses || '') }>
       <input className="filter-checkbox__input" id="filter-__input" type="checkbox" />
       <label 
-        className={ 'filter-checkbox__label ' + (isChecked ? 'filter-checkbox__label_checked' : '') }
-        for="filter-checkbox__input"
-        onClick={ handleFilterCheckboxCheck }
+        className={ 'filter-checkbox__label ' + (props.isChecked ? 'filter-checkbox__label_checked' : '') }
+        htmlFor="filter-checkbox__input"
+        onClick={ props.onCheck }
       >
         Короткометражки
       </label>

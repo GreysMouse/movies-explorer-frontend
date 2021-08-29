@@ -1,13 +1,12 @@
 import './preloader.css';
-import './preloader_active.css';
 import './preloader__container.css';
 import './preloader__round.css';
 
-function Preloader(props) {
+function Preloader() {
   return (
-    <div className={ 'preloader ' + (props.isActive ? 'preloader_active' : '') }>
+    <div className="preloader">
       <div className="preloader__container">
-          <span className="preloader__round"></span>
+          <span className="preloader__round" />
       </div>
     </div>
   )

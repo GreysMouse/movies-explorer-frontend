@@ -1,7 +1,8 @@
 .profile-form__submit-button {
   display: block;
   align-self: center;
-  margin: 205px 0 0;
+  /* margin: 205px 0 0; */
+  margin: 179px 0 0;
   padding: 0;
   border: none;
   outline: none;
@@ -20,12 +21,14 @@
 
 @media screen and (max-width: 950px) {
   .profile-form__submit-button {
-    margin: 195px 0 0;
+    /* margin: 195px 0 0; */
+    margin: 169px 0 0;
   }
 }
 
 @media screen and (max-width: 425px) {
   .profile-form__submit-button {
-    margin: 364px 0 0;
+    /* margin: 364px 0 0; */
+    margin: 352px 0 0;
   }
 }
